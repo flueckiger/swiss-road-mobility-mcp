@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **User-Agent no longer reports a stale version.** `__version__` was a
+  hand-maintained literal in `__init__.py` that nothing forced anyone to bump.
+  It sat at `0.5.0` while the package had moved on to `0.5.3`, so every outbound
+  request advertised a version three patch releases old to GBFS operators, the
+  EV charging feeds and DATEX II. It is now read from the installed
+  distribution metadata (`importlib.metadata`), which is generated from
+  `pyproject.toml` — a value nobody has to remember to bump cannot go stale.
+  Running from a bare source checkout yields `0.0.0+source` rather than a
+  plausible-looking wrong number. Guarded by `tests/test_version.py`.
+
 ## [0.5.0] - 2026-06-03
 
 Security-, observability- and SDK-maturity hardening release implementing the
