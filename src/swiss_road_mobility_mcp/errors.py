@@ -33,7 +33,7 @@ def error_envelope(code: str, message: str) -> dict[str, Any]:
     Shape:
         {"isError": true, "error": {"code": "<CODE>", "message": "<text>"}}
 
-    Returned as a dict so FastMCP emits it as ``structuredContent`` (plus a
+    Returned as a dict so MCPServer emits it as ``structuredContent`` (plus a
     JSON text rendering), consistent with the success path.
     """
     return {"isError": True, "error": {"code": code, "message": message}}

@@ -2,7 +2,7 @@
 
 These import `server` (and therefore `mcp`) and drive a tool over a connected
 client/server session, so Context injection, progress reporting and the full
-FastMCP call path are exercised — with respx-mocked upstreams (offline).
+MCPServer call path are exercised — with respx-mocked upstreams (offline).
 """
 
 import json
@@ -12,9 +12,7 @@ import respx
 
 pytest.importorskip("mcp")
 
-from mcp.shared.memory import (  # noqa: E402
-    create_connected_server_and_client_session as connect,
-)
+from mcp.client import Client as connect  # noqa: E402
 
 from swiss_road_mobility_mcp import ev_charging, server  # noqa: E402
 
@@ -28,7 +26,7 @@ async def test_find_charger_tool_via_session():
     respx.get(ev_charging.GEOJSON_URL).respond(200, json=_GEO)
     respx.get(ev_charging.STATUS_URL).respond(200, json=_STATUS)
 
-    async with connect(server.mcp._mcp_server) as client:
+    async with connect(server.mcp) as client:
         result = await client.call_tool(
             "road_find_charger",
             {"params": {
@@ -41,10 +39,10 @@ async def test_find_charger_tool_via_session():
             }},
         )
 
-    assert result.isError is False
+    assert result.is_error is False
     # SDK-002: structured output is delivered alongside the JSON text.
-    assert result.structuredContent is not None
-    assert result.structuredContent["total_found"] >= 1
+    assert result.structured_content is not None
+    assert result.structured_content["total_found"] >= 1
     # Backward-compatible text rendering is still present.
     data = json.loads(result.content[0].text)
     assert data["total_found"] >= 1
@@ -59,16 +57,16 @@ async def test_check_status_tool_via_session_is_resilient():
     proving the per-endpoint error handling keeps the tool itself successful
     (and offline-deterministic).
     """
-    async with connect(server.mcp._mcp_server) as client:
+    async with connect(server.mcp) as client:
         result = await client.call_tool("road_check_status", {})
-    assert result.isError is False
+    assert result.is_error is False
     data = json.loads(result.content[0].text)
     assert "endpoints" in data
 
 
 async def test_data_sources_resource_and_prompt_are_exposed():
     """ARCH-008: the server exposes a Resource and a Prompt (not tools-only)."""
-    async with connect(server.mcp._mcp_server) as client:
+    async with connect(server.mcp) as client:
         resources = await client.list_resources()
         assert "roadmobility://data-sources" in {str(r.uri) for r in resources.resources}
 
@@ -84,9 +82,9 @@ async def test_data_sources_resource_and_prompt_are_exposed():
 
 async def test_strict_input_rejects_wrong_type():
     """SEC-018: strict=True rejects loosely-typed input (string for a float field)."""
-    async with connect(server.mcp._mcp_server) as client:
+    async with connect(server.mcp) as client:
         result = await client.call_tool(
             "road_find_sharing",
             {"params": {"latitude": "not-a-number", "longitude": 8.5417}},
         )
-    assert result.isError is True
+    assert result.is_error is True
