@@ -30,7 +30,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
 
-from mcp.server.fastmcp import Context, FastMCP
+from mcp.server.mcpserver import Context, MCPServer
 from pydantic import BaseModel, ConfigDict, Field
 
 from . import (
@@ -63,7 +63,7 @@ _client: MobilityHTTPClient | None = None
 
 
 @asynccontextmanager
-async def _lifespan(server: FastMCP) -> AsyncIterator[dict]:
+async def _lifespan(server: MCPServer) -> AsyncIterator[dict]:
     """SDK-001: manage the shared HTTP client for the server's lifetime."""
     global _client
     async with managed_client() as client:
@@ -74,7 +74,7 @@ async def _lifespan(server: FastMCP) -> AsyncIterator[dict]:
             _client = None
 
 
-mcp = FastMCP(
+mcp = MCPServer(
     "swiss_road_mobility_mcp",
     instructions=(
         "Swiss road and mobility data server with 15 tools (Phase 1 + Phase 2 + Phase 3 + Phase 4). "
@@ -114,7 +114,7 @@ mcp = FastMCP(
 def _get_client() -> MobilityHTTPClient:
     """Return the lifespan-managed shared client.
 
-    Normally the FastMCP lifespan creates it at startup. The lazy fallback only
+    Normally the MCPServer lifespan creates it at startup. The lazy fallback only
     triggers when a tool function is called outside a running server (e.g. unit
     tests that import and call tools directly); such a client is not lifespan-
     closed, which is acceptable in those short-lived contexts.
@@ -1690,7 +1690,7 @@ def main():
 def _run_sse(host: str, port: int) -> None:
     """Start the SSE transport with CORS, auth and rate limiting.
 
-    On top of FastMCP's own SSE Starlette app we layer three pure-ASGI
+    On top of MCPServer's own SSE Starlette app we layer three pure-ASGI
     middlewares (request flow outermost -> innermost):
 
       CORS (SDK-004) -> RateLimit (SEC-009) -> BearerAuth (SEC-009) -> app
@@ -1703,8 +1703,8 @@ def _run_sse(host: str, port: int) -> None:
     - BearerAuth requires `Authorization: Bearer <MCP_AUTH_TOKEN>` when that
       env var is set; otherwise it is a pass-through and we warn loudly.
 
-    Served via uvicorn — the same path FastMCP.run uses internally. Falls back
-    to the plain FastMCP SSE runner if the app/middleware wiring is unavailable
+    Served via uvicorn — the same path MCPServer.run uses internally. Falls back
+    to the plain MCPServer SSE runner if the app/middleware wiring is unavailable
     (e.g. a future SDK API change), so SSE never silently breaks.
     """
     allowed = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]

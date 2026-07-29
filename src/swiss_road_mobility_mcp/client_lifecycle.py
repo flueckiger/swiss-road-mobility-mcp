@@ -3,7 +3,7 @@
 Previously the shared ``MobilityHTTPClient`` was created by an ad-hoc lazy
 global and never closed — the underlying httpx connection pool leaked at
 shutdown. The construction logic lives here (no ``mcp`` import, so it is unit
-testable) and is driven by the FastMCP *lifespan* in ``server.py``: the client
+testable) and is driven by the MCPServer *lifespan* in ``server.py``: the client
 is built at startup and deterministically closed at shutdown.
 """
 
