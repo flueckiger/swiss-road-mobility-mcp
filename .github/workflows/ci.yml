@@ -37,6 +37,9 @@ jobs:
       - name: Unit tests (mocked, no live APIs)
         run: pytest -m "not live"
 
+      - name: Versions-Sync (pyproject ↔ server.json / README / src)
+        run: python scripts/check_version_sync.py
+
   secret-scan:
     runs-on: ubuntu-latest
     steps:
