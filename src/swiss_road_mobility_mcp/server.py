@@ -1687,6 +1687,59 @@ def main():
         mcp.run(transport="stdio")
 
 
+def build_transport_security(host: str, port: int):
+    """Host/Origin allow-list for the SSE transport (SEC-005, inbound half).
+
+    Under mcp 2.x this is a per-app kwarg, and omitting it is *not* neutral: the
+    SDK derives a default from the app's ``host`` argument and auto-enables
+    ``127.0.0.1:*`` whenever that looks like loopback. Since ``host`` itself
+    defaults to ``127.0.0.1``, the hardened SSE path answered every request
+    under a real hostname with HTTP 421 — on exactly the ``MCP_HOST=0.0.0.0``
+    deployment the Dockerfile and render.yaml set up.
+
+    The plain-SSE fallback below was never affected: it passes ``host`` to
+    ``mcp.run()``, where the SDK sees the real bind. Only the hardened path,
+    which is the one that actually ships, dropped it.
+
+    Returns ``None`` when no allow-list is derivable — a non-loopback bind with
+    no ``MCP_ALLOWED_HOSTS``. A guessed list reproduces exactly that 421, so the
+    caller warns instead.
+
+    Orthogonal to the BearerAuth middleware: that checks *who* is asking, this
+    checks *under which name* the server is addressed. DNS rebinding targets the
+    latter and carries a valid token by construction.
+    """
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    loopback = {f"127.0.0.1:{port}", f"localhost:{port}", f"[::1]:{port}"}
+    allowed = [
+        h.strip() for h in os.environ.get("MCP_ALLOWED_HOSTS", "").split(",") if h.strip()
+    ]
+    if allowed:
+        # Loopback stays reachable for container health checks and debugging.
+        hosts = set(allowed) | loopback
+    elif host in ("127.0.0.1", "localhost", "::1"):
+        hosts = loopback | {f"{host}:{port}"}
+    else:
+        return None
+
+    # Configured CORS origins must also pass the transport check, or the server
+    # rejects exactly the browser clients CORS permits. "*" is not expressible
+    # (origins are compared literally) and is not copied across — relevant here
+    # because ALLOWED_ORIGINS defaults to a wildcard.
+    origins = {
+        o.strip()
+        for o in os.environ.get("ALLOWED_ORIGINS", "").split(",")
+        if o.strip() and o.strip() != "*"
+    }
+    origins |= {f"http://{h}" for h in hosts}
+    return TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=sorted(hosts),
+        allowed_origins=sorted(origins),
+    )
+
+
 def _run_sse(host: str, port: int) -> None:
     """Start the SSE transport with CORS, auth and rate limiting.
 
@@ -1721,7 +1774,19 @@ def _run_sse(host: str, port: int) -> None:
         import uvicorn
         from starlette.middleware.cors import CORSMiddleware
 
-        app = mcp.sse_app()
+        security = build_transport_security(host, port)
+        if security is None:
+            logger.warning(
+                "DNS rebinding protection is OFF: the bind %s is not loopback and "
+                "MCP_ALLOWED_HOSTS is empty. Set it to the hostnames this server "
+                "is reachable under so Host and Origin are validated (SEC-005). "
+                "This is separate from MCP_AUTH_TOKEN — a rebinding attack "
+                "carries a valid token by construction.",
+                host,
+            )
+        # `host` is not cosmetic: the SDK derives its Host allow-list from it, so
+        # omitting it made a 0.0.0.0 deployment answer every request with 421.
+        app = mcp.sse_app(transport_security=security, host=host)
         # add_middleware prepends, so the LAST added is outermost. Desired
         # request flow: CORS -> RateLimit -> BearerAuth -> app.
         app.add_middleware(BearerAuthMiddleware, token=cfg.auth_token)

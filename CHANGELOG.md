@@ -8,6 +8,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- **Der gehärtete SSE-Pfad wies unter jedem echten Hostnamen mit 421 ab
+  (SEC-005).** `_run_sse()` baute die App mit `mcp.sse_app()` ohne `host`. Unter
+  mcp 2.x ist das kein neutraler Default: das SDK leitet daraus seine
+  Host-Allow-List ab und aktiviert bei loopback-artigem Wert automatisch
+  `127.0.0.1:*`. Da der Default `127.0.0.1` ist, traf das genau das
+  `MCP_HOST=0.0.0.0`-Deployment aus Dockerfile und render.yaml.
+
+  Der Server hat **zwei** SSE-Pfade, und nur einer war betroffen: der
+  Fallback `mcp.run(transport="sse", host=…)` gibt den Bind weiter, dort sah das
+  SDK die echte Adresse. Betroffen war der gehärtete Pfad — also der, der
+  ausgeliefert wird.
+
+  Der Bind reist jetzt mit, und eine echte Allow-List entsteht aus dem neuen
+  `MCP_ALLOWED_HOSTS`. Ohne diese Variable bleibt der Schutz auf einem
+  Nicht-Loopback-Bind bewusst aus und der Aufrufer warnt.
+
+  Das ist unabhängig von `MCP_AUTH_TOKEN`: die Bearer-Prüfung sagt, *wer* fragt,
+  die Host-Prüfung, *unter welchem Namen* der Server angesprochen wird. Ein
+  Rebinding-Angriff bringt ein gültiges Token per Konstruktion mit.
+
+- **Der `except Exception`-Fallback ist jetzt im Test sichtbar.** Er verwirft
+  bei jedem Fehler im gehärteten Aufbau still Auth, Rate-Limit *und*
+  Allow-List. Ein Test hält fest, dass der gehärtete Pfad wirklich genommen
+  wird; eine Fixture patcht `mcp.run`, damit ein Fallback im Test nicht einen
+  echten Server startet. Ohne das liess ein Mutationstest die Suite *hängen*
+  statt sie scheitern zu lassen — nachgemessen und behoben.
+
+  13 neue Tests, darunter der tragende Fall „richtiger Hostname, falscher Port".
+  Der Positivfall wird bewusst an der Verdrahtung geprüft statt end-to-end: ein
+  erlaubter Host öffnet einen endlosen Event-Stream, auf den der TestClient
+  wartet. Mutationsgetestet in beide Richtungen.
+
+  Geprüft mit den wörtlichen CI-Kommandos: 102 passed / 27 deselected,
+  `ruff check src/` clean, Versions-Sync OK.
+
+
+### Fixed
 - **User-Agent no longer reports a stale version.** `__version__` was a
   hand-maintained literal in `__init__.py` that nothing forced anyone to bump.
   It sat at `0.5.0` while the package had moved on to `0.5.3`, so every outbound
