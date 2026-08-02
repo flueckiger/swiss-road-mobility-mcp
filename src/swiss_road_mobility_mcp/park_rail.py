@@ -66,6 +66,7 @@ _features_cache_ts: float = 0.0
 # Daten-Formatierung
 # ---------------------------------------------------------------------------
 
+
 def _format_feature(
     feature: dict,
     lat_center: float | None = None,
@@ -104,12 +105,7 @@ def _format_feature(
 
     props = feature.get("properties") or {}
 
-    name = (
-        props.get("displayName")
-        or props.get("name")
-        or props.get("label")
-        or "Unbekannt"
-    )
+    name = props.get("displayName") or props.get("name") or props.get("label") or "Unbekannt"
 
     # ── Kapazität ──────────────────────────────────────────────────────────
     # capacities[] kann mehrere Kategorien (STANDARD, DISABLED, …) enthalten.
@@ -162,6 +158,7 @@ def _format_feature(
 # ---------------------------------------------------------------------------
 # Netzwerk: GeoJSON via CKAN beschaffen (mit Cache)
 # ---------------------------------------------------------------------------
+
 
 async def _discover_geojson_url(client: httpx.AsyncClient, dataset_id: str) -> str | None:
     """Ermittelt die Download-URL der (Geo)JSON-Resource eines CKAN-Datensatzes."""
@@ -236,7 +233,9 @@ async def _fetch_park_rail_features() -> list[dict]:
                 # OBS-002: rohen Upstream-Body nur server-seitig loggen.
                 logger.warning(
                     "Park+Rail: HTTP %s bei Datensatz '%s': %s",
-                    e.response.status_code, dataset_id, e.response.text[:200],
+                    e.response.status_code,
+                    dataset_id,
+                    e.response.text[:200],
                 )
                 last_error = f"HTTP {e.response.status_code} bei Datensatz '{dataset_id}'"
             except httpx.RequestError as e:
@@ -279,6 +278,7 @@ async def _get_features() -> list[dict]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 async def find_nearby_park_rail(
     latitude: float,

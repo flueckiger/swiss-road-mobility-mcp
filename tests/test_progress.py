@@ -20,8 +20,12 @@ async def _run(on_progress, *, include_details):
     client = MobilityHTTPClient()
     try:
         return await ev_charging.find_nearby_chargers(
-            client, longitude=8.54, latitude=47.37, radius_km=2.0,
-            include_details=include_details, on_progress=on_progress,
+            client,
+            longitude=8.54,
+            latitude=47.37,
+            radius_km=2.0,
+            include_details=include_details,
+            on_progress=on_progress,
         )
     finally:
         await client.close()

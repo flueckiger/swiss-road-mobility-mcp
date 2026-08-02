@@ -32,6 +32,7 @@ def _make_app(middleware):
 # BearerAuthMiddleware
 # ===========================================================================
 
+
 class TestBearerAuth:
     def test_no_token_configured_is_passthrough(self):
         client = _make_app([(BearerAuthMiddleware, {"token": None})])
@@ -62,6 +63,7 @@ class TestBearerAuth:
 # ===========================================================================
 # RateLimitMiddleware
 # ===========================================================================
+
 
 class TestRateLimit:
     def test_under_limit_passes(self):
@@ -102,14 +104,17 @@ class TestRateLimit:
 # Layered: CORS-equivalent order (RateLimit outer, Auth inner)
 # ===========================================================================
 
+
 class TestLayered:
     def test_rate_limit_runs_before_auth(self):
         # RateLimit added last => outermost. An unauthenticated flood should be
         # throttled (429) rather than every request hitting auth (401).
-        client = _make_app([
-            (BearerAuthMiddleware, {"token": "s3cr3t"}),          # innermost
-            (RateLimitMiddleware, {"max_requests": 1, "window_seconds": 60}),  # outermost
-        ])
+        client = _make_app(
+            [
+                (BearerAuthMiddleware, {"token": "s3cr3t"}),  # innermost
+                (RateLimitMiddleware, {"max_requests": 1, "window_seconds": 60}),  # outermost
+            ]
+        )
         assert client.get("/x").status_code == 401  # auth fails, but counts a hit
         assert client.get("/x").status_code == 429  # second request throttled first
 
@@ -117,6 +122,7 @@ class TestLayered:
 # ===========================================================================
 # middleware_config (env parsing)
 # ===========================================================================
+
 
 class TestConfig:
     def test_defaults(self, monkeypatch):

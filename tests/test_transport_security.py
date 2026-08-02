@@ -41,9 +41,7 @@ def _clean_env(monkeypatch):
 
     for var in ("MCP_ALLOWED_HOSTS", "ALLOWED_ORIGINS", "MCP_AUTH_TOKEN"):
         monkeypatch.delenv(var, raising=False)
-    monkeypatch.setattr(
-        type(srv.mcp), "run", lambda self, **kw: _FELL_BACK.append(kw)
-    )
+    monkeypatch.setattr(type(srv.mcp), "run", lambda self, **kw: _FELL_BACK.append(kw))
     _FELL_BACK.clear()
     yield
 

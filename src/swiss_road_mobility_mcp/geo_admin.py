@@ -49,59 +49,59 @@ TIMEOUT = 10.0
 # ---------------------------------------------------------------------------
 
 OBJEKTART: dict[int, dict] = {
-    1:  {"de": "Autobahn",                  "en": "Motorway",                "emoji": "🛣️",  "importance": "national"},
-    2:  {"de": "Autostrasse",               "en": "Motorway-like road",      "emoji": "🛤️",  "importance": "national"},
-    3:  {"de": "Ausfahrt Autobahn",         "en": "Motorway exit/ramp",      "emoji": "↗️",  "importance": "national"},
-    4:  {"de": "Anschluss Hauptverkehrsstr.","en": "Main road junction",      "emoji": "↗️",  "importance": "regional"},
-    6:  {"de": "Hauptstrasse",              "en": "Main road",               "emoji": "🚗",  "importance": "regional"},
-    8:  {"de": "Nebenstrasse",              "en": "Secondary road",          "emoji": "🏘️",  "importance": "local"},
-    9:  {"de": "Strasse (Sonderzweck)",     "en": "Special-purpose road",    "emoji": "⚠️",  "importance": "local"},
-    10: {"de": "Weg / sonstige Strasse",    "en": "Path / other road",       "emoji": "🚶",  "importance": "local"},
-    11: {"de": "Zufahrtsstrasse",           "en": "Access road",             "emoji": "🏠",  "importance": "local"},
-    12: {"de": "Karrenweg / Güterweg",      "en": "Track / farm road",       "emoji": "🌾",  "importance": "agricultural"},
-    14: {"de": "Radweg",                    "en": "Cycle path",              "emoji": "🚲",  "importance": "local"},
-    15: {"de": "Fussweg",                   "en": "Footpath",                "emoji": "🚶",  "importance": "local"},
-    16: {"de": "Treppenweg",               "en": "Steps / stairway",        "emoji": "🪜",  "importance": "local"},
-    20: {"de": "Flurweg",                   "en": "Field path",              "emoji": "🌿",  "importance": "agricultural"},
+    1: {"de": "Autobahn", "en": "Motorway", "emoji": "🛣️", "importance": "national"},
+    2: {"de": "Autostrasse", "en": "Motorway-like road", "emoji": "🛤️", "importance": "national"},
+    3: {"de": "Ausfahrt Autobahn", "en": "Motorway exit/ramp", "emoji": "↗️", "importance": "national"},
+    4: {"de": "Anschluss Hauptverkehrsstr.", "en": "Main road junction", "emoji": "↗️", "importance": "regional"},
+    6: {"de": "Hauptstrasse", "en": "Main road", "emoji": "🚗", "importance": "regional"},
+    8: {"de": "Nebenstrasse", "en": "Secondary road", "emoji": "🏘️", "importance": "local"},
+    9: {"de": "Strasse (Sonderzweck)", "en": "Special-purpose road", "emoji": "⚠️", "importance": "local"},
+    10: {"de": "Weg / sonstige Strasse", "en": "Path / other road", "emoji": "🚶", "importance": "local"},
+    11: {"de": "Zufahrtsstrasse", "en": "Access road", "emoji": "🏠", "importance": "local"},
+    12: {"de": "Karrenweg / Güterweg", "en": "Track / farm road", "emoji": "🌾", "importance": "agricultural"},
+    14: {"de": "Radweg", "en": "Cycle path", "emoji": "🚲", "importance": "local"},
+    15: {"de": "Fussweg", "en": "Footpath", "emoji": "🚶", "importance": "local"},
+    16: {"de": "Treppenweg", "en": "Steps / stairway", "emoji": "🪜", "importance": "local"},
+    20: {"de": "Flurweg", "en": "Field path", "emoji": "🌿", "importance": "agricultural"},
 }
 
 VERKEHRSBEDEUTUNG: dict[int, str] = {
-    100:    "Kein Wert (unklassiert)",
-    200:    "Zufahrtstrasse",
-    300:    "Sammelstrasse",
-    400:    "Verbindungsstrasse",
-    500:    "Hauptverbindungsstrasse",
-    600:    "Hauptstrasse",
+    100: "Kein Wert (unklassiert)",
+    200: "Zufahrtstrasse",
+    300: "Sammelstrasse",
+    400: "Verbindungsstrasse",
+    500: "Hauptverbindungsstrasse",
+    600: "Hauptstrasse",
     999997: "Keine Angabe",
     999998: "Kein Attributwert",
 }
 
 BELAGSART: dict[int, str] = {
-    100:    "Hartbelag (Asphalt/Beton)",
-    200:    "Weich- / Naturbelag",
+    100: "Hartbelag (Asphalt/Beton)",
+    200: "Weich- / Naturbelag",
     999998: "Unbekannt",
 }
 
 EIGENTUEMER: dict[int, str] = {
-    100:    "Bund",
-    200:    "Kanton",
-    300:    "Gemeinde",
-    400:    "Privat",
+    100: "Bund",
+    200: "Kanton",
+    300: "Gemeinde",
+    400: "Privat",
     999997: "Keine Angabe",
     999998: "Kein Attributwert",
 }
 
 VERKEHRSBESCHRAENKUNG: dict[int, str] = {
-    100:    "Keine Beschränkung",
-    200:    "Fahrzeuge mit Bewilligung",
-    300:    "Forst- und Landwirtschaft",
-    400:    "Grundstückbesitzer",
-    500:    "Einsatzkräfte (Feuerwehr/Ambulanz/Polizei)",
-    900:    "Kein öffentlicher Verkehr",
-    1000:   "Baufahrzeuge",
-    1100:   "Busse und Taxis",
-    1200:   "Zweiräder erlaubt",
-    1900:   "Fussgänger und Radfahrer",
+    100: "Keine Beschränkung",
+    200: "Fahrzeuge mit Bewilligung",
+    300: "Forst- und Landwirtschaft",
+    400: "Grundstückbesitzer",
+    500: "Einsatzkräfte (Feuerwehr/Ambulanz/Polizei)",
+    900: "Kein öffentlicher Verkehr",
+    1000: "Baufahrzeuge",
+    1100: "Busse und Taxis",
+    1200: "Zweiräder erlaubt",
+    1900: "Fussgänger und Radfahrer",
     999998: "Kein Attributwert",
 }
 
@@ -109,35 +109,39 @@ VERKEHRSBESCHRAENKUNG: dict[int, str] = {
 # Hilfsfunktionen
 # ---------------------------------------------------------------------------
 
+
 def _decode_road_properties(props: dict) -> dict:
     """
     Übersetzt rohe swissTLM3D-Attribute in lesbare Texte und Metadaten.
     """
     raw_obj = props.get("objektart")
-    raw_vb  = props.get("verkehrsbedeutung")
-    raw_ba  = props.get("belagsart")
+    raw_vb = props.get("verkehrsbedeutung")
+    raw_ba = props.get("belagsart")
     raw_eig = props.get("eigentuemer")
     raw_vbs = props.get("verkehrsbeschraenkung")
 
-    obj_info = OBJEKTART.get(raw_obj, {
-        "de": f"Unbekannt (Code {raw_obj})",
-        "en": f"Unknown (code {raw_obj})",
-        "emoji": "❓",
-        "importance": "unknown",
-    })
+    obj_info = OBJEKTART.get(
+        raw_obj,
+        {
+            "de": f"Unbekannt (Code {raw_obj})",
+            "en": f"Unknown (code {raw_obj})",
+            "emoji": "❓",
+            "importance": "unknown",
+        },
+    )
 
     return {
-        "road_name":       props.get("strassenname"),
+        "road_name": props.get("strassenname"),
         "road_type": {
-            "code":               raw_obj,
-            "label_de":           obj_info["de"],
-            "label_en":           obj_info["en"],
-            "emoji":              obj_info["emoji"],
+            "code": raw_obj,
+            "label_de": obj_info["de"],
+            "label_en": obj_info["en"],
+            "emoji": obj_info["emoji"],
             "network_importance": obj_info["importance"],
         },
-        "surface":            BELAGSART.get(raw_ba,  f"Code {raw_ba}"),
-        "functional_class":   VERKEHRSBEDEUTUNG.get(raw_vb,  f"Code {raw_vb}"),
-        "ownership":          EIGENTUEMER.get(raw_eig, f"Code {raw_eig}"),
+        "surface": BELAGSART.get(raw_ba, f"Code {raw_ba}"),
+        "functional_class": VERKEHRSBEDEUTUNG.get(raw_vb, f"Code {raw_vb}"),
+        "ownership": EIGENTUEMER.get(raw_eig, f"Code {raw_eig}"),
         "access_restriction": VERKEHRSBESCHRAENKUNG.get(raw_vbs, f"Code {raw_vbs}"),
     }
 
@@ -155,6 +159,7 @@ def _build_mapextent(lon: float, lat: float, delta: float = 0.02) -> str:
 # ---------------------------------------------------------------------------
 # Öffentliche API-Funktionen
 # ---------------------------------------------------------------------------
+
 
 async def geocode_address(
     search_text: str,
@@ -177,12 +182,12 @@ async def geocode_address(
     """
     params = {
         "searchText": search_text,
-        "type":       "locations",
-        "origins":    "address",
+        "type": "locations",
+        "origins": "address",
         "returnGeometry": "true",
-        "limit":      str(limit),
-        "lang":       "de",
-        "sr":         "4326",
+        "limit": str(limit),
+        "lang": "de",
+        "sr": "4326",
     }
 
     async with async_client(timeout=TIMEOUT) as client:
@@ -193,20 +198,22 @@ async def geocode_address(
     results = []
     for hit in data.get("results", []):
         attrs = hit.get("attrs", {})
-        results.append({
-            "address":     _clean_label(attrs.get("label", "")),
-            "detail":      attrs.get("detail", ""),
-            "latitude":    attrs.get("lat"),
-            "longitude":   attrs.get("lon"),
-            "feature_id":  attrs.get("featureId"),
-            "source":      LAYER_ADDRESSES,
-        })
+        results.append(
+            {
+                "address": _clean_label(attrs.get("label", "")),
+                "detail": attrs.get("detail", ""),
+                "latitude": attrs.get("lat"),
+                "longitude": attrs.get("lon"),
+                "feature_id": attrs.get("featureId"),
+                "source": LAYER_ADDRESSES,
+            }
+        )
 
     return {
-        "query":       search_text,
-        "found":       len(results),
+        "query": search_text,
+        "found": len(results),
         "data_source": "swisstopo amtliches Gebäudeadressverzeichnis (geo.admin.ch)",
-        "results":     results,
+        "results": results,
     }
 
 
@@ -232,17 +239,17 @@ async def reverse_geocode(
       - official_address: true wenn amtlich registriert
     """
     params = {
-        "geometry":       f"{longitude},{latitude}",
+        "geometry": f"{longitude},{latitude}",
         "geometryFormat": "geojson",
-        "geometryType":   "esriGeometryPoint",
-        "imageDisplay":   "500,500,96",
-        "mapExtent":      _build_mapextent(longitude, latitude, delta=0.005),
-        "tolerance":      "30",
-        "layers":         f"all:{LAYER_ADDRESSES}",
-        "sr":             "4326",
-        "lang":           "de",
+        "geometryType": "esriGeometryPoint",
+        "imageDisplay": "500,500,96",
+        "mapExtent": _build_mapextent(longitude, latitude, delta=0.005),
+        "tolerance": "30",
+        "layers": f"all:{LAYER_ADDRESSES}",
+        "sr": "4326",
+        "lang": "de",
         "returnGeometry": "false",
-        "limit":          str(min(limit, 10)),
+        "limit": str(min(limit, 10)),
     }
 
     async with async_client(timeout=TIMEOUT) as client:
@@ -253,27 +260,29 @@ async def reverse_geocode(
     addresses = []
     for feature in data.get("results", [])[:limit]:
         p = feature.get("properties", {})
-        addresses.append({
-            "address":            f"{p.get('stn_label', '')} {p.get('adr_number', '')}".strip(),
-            "street":             p.get("stn_label"),
-            "house_number":       p.get("adr_number"),
-            "zip_municipality":   p.get("zip_label"),
-            "municipality":       p.get("com_name"),
-            "municipality_number": p.get("com_fosnr"),
-            "egid":               p.get("bdg_egid"),    # Eidg. Gebäudeidentifikator
-            "egaid":              p.get("adr_egaid"),   # Eidg. Adressidentifikator
-            "building_category":  p.get("bdg_category"),
-            "official_address":   p.get("adr_official"),
-            "status":             p.get("adr_status"),
-            "last_modified":      p.get("adr_modified"),
-            "source":             LAYER_ADDRESSES,
-        })
+        addresses.append(
+            {
+                "address": f"{p.get('stn_label', '')} {p.get('adr_number', '')}".strip(),
+                "street": p.get("stn_label"),
+                "house_number": p.get("adr_number"),
+                "zip_municipality": p.get("zip_label"),
+                "municipality": p.get("com_name"),
+                "municipality_number": p.get("com_fosnr"),
+                "egid": p.get("bdg_egid"),  # Eidg. Gebäudeidentifikator
+                "egaid": p.get("adr_egaid"),  # Eidg. Adressidentifikator
+                "building_category": p.get("bdg_category"),
+                "official_address": p.get("adr_official"),
+                "status": p.get("adr_status"),
+                "last_modified": p.get("adr_modified"),
+                "source": LAYER_ADDRESSES,
+            }
+        )
 
     return {
-        "query":       {"latitude": latitude, "longitude": longitude},
-        "found":       len(addresses),
+        "query": {"latitude": latitude, "longitude": longitude},
+        "found": len(addresses),
         "data_source": "swisstopo amtliches Gebäudeadressverzeichnis (geo.admin.ch / GWR)",
-        "addresses":   addresses,
+        "addresses": addresses,
     }
 
 
@@ -308,15 +317,15 @@ async def classify_road(
                    (je nach Zoom ca. 5–200m; Default 50 ≈ ~25m)
     """
     params = {
-        "geometry":       f"{longitude},{latitude}",
+        "geometry": f"{longitude},{latitude}",
         "geometryFormat": "geojson",
-        "geometryType":   "esriGeometryPoint",
-        "imageDisplay":   "1000,1000,96",
-        "mapExtent":      _build_mapextent(longitude, latitude, delta=0.01),
-        "tolerance":      str(tolerance),
-        "layers":         f"all:{LAYER_ROADS}",
-        "sr":             "4326",
-        "lang":           "de",
+        "geometryType": "esriGeometryPoint",
+        "imageDisplay": "1000,1000,96",
+        "mapExtent": _build_mapextent(longitude, latitude, delta=0.01),
+        "tolerance": str(tolerance),
+        "layers": f"all:{LAYER_ROADS}",
+        "sr": "4326",
+        "lang": "de",
         "returnGeometry": "false",
     }
 
@@ -349,12 +358,12 @@ async def classify_road(
 
     return {
         "query": {
-            "latitude":     latitude,
-            "longitude":    longitude,
+            "latitude": latitude,
+            "longitude": longitude,
             "tolerance_px": tolerance,
         },
-        "found":        len(roads),
+        "found": len(roads),
         "type_summary": type_summary,
-        "data_source":  "swisstopo swissTLM3D Strassen (geo.admin.ch)",
-        "roads":        roads,
+        "data_source": "swisstopo swissTLM3D Strassen (geo.admin.ch)",
+        "roads": roads,
     }

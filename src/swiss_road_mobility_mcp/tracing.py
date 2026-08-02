@@ -79,10 +79,12 @@ def configure_tracing(
         )
         return False
 
-    resource = Resource.create({
-        "service.name": service_name,
-        "service.version": __version__,
-    })
+    resource = Resource.create(
+        {
+            "service.name": service_name,
+            "service.version": __version__,
+        }
+    )
     provider = TracerProvider(resource=resource)
 
     if span_exporter is not None:
@@ -91,6 +93,7 @@ def configure_tracing(
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
             OTLPSpanExporter,
         )
+
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 
     trace.set_tracer_provider(provider)

@@ -24,6 +24,7 @@ def _set_resolver(monkeypatch, ips):
         if isinstance(ips, Exception):
             raise ips
         return list(ips)
+
     monkeypatch.setattr(egress, "_resolver", _fake)
 
 
@@ -97,15 +98,27 @@ class TestEnforcement:
 # SEC-005 — resolved-IP guard (DNS rebinding / SSRF to internal addresses)
 # ===========================================================================
 
+
 class TestIsPublicIp:
     @pytest.mark.parametrize("ip", ["8.8.8.8", "93.184.216.34", "2606:2800:220:1::1"])
     def test_public(self, ip):
         assert is_public_ip(ip)
 
-    @pytest.mark.parametrize("ip", [
-        "127.0.0.1", "10.0.0.1", "192.168.1.5", "172.16.0.1",
-        "169.254.169.254", "0.0.0.0", "::1", "fc00::1", "fe80::1", "not-an-ip",
-    ])
+    @pytest.mark.parametrize(
+        "ip",
+        [
+            "127.0.0.1",
+            "10.0.0.1",
+            "192.168.1.5",
+            "172.16.0.1",
+            "169.254.169.254",
+            "0.0.0.0",
+            "::1",
+            "fc00::1",
+            "fe80::1",
+            "not-an-ip",
+        ],
+    )
     def test_not_public(self, ip):
         assert not is_public_ip(ip)
 

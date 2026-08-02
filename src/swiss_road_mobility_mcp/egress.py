@@ -40,17 +40,19 @@ import httpx
 logger = logging.getLogger("swiss-road-mobility-mcp")
 
 # The official upstreams this server is allowed to reach.
-ALLOWED_HOSTS: frozenset[str] = frozenset({
-    "api.sharedmobility.ch",          # shared mobility (BFE)
-    "data.geo.admin.ch",              # EV charging GeoJSON/status (swisstopo)
-    "api3.geo.admin.ch",              # geocoding / road classification
-    "data.sbb.ch",                    # SBB Park & Rail open data
-    "transport.opendata.ch",          # public-transport journey planner
-    "api.opentransportdata.swiss",    # DATEX II traffic + CKAN API (Phase 2/3)
-    "api-manager.opentransportdata.swiss",
-    "opentransportdata.swiss",         # Park & Rail GeoJSON resource downloads
-    "data.opentransportdata.swiss",    # CKAN portal / resource downloads
-})
+ALLOWED_HOSTS: frozenset[str] = frozenset(
+    {
+        "api.sharedmobility.ch",  # shared mobility (BFE)
+        "data.geo.admin.ch",  # EV charging GeoJSON/status (swisstopo)
+        "api3.geo.admin.ch",  # geocoding / road classification
+        "data.sbb.ch",  # SBB Park & Rail open data
+        "transport.opendata.ch",  # public-transport journey planner
+        "api.opentransportdata.swiss",  # DATEX II traffic + CKAN API (Phase 2/3)
+        "api-manager.opentransportdata.swiss",
+        "opentransportdata.swiss",  # Park & Rail GeoJSON resource downloads
+        "data.opentransportdata.swiss",  # CKAN portal / resource downloads
+    }
+)
 
 
 class EgressBlockedError(Exception):
@@ -59,7 +61,10 @@ class EgressBlockedError(Exception):
 
 def _enforcing() -> bool:
     return os.environ.get("MCP_EGRESS_ALLOWLIST_DISABLED", "").strip().lower() not in (
-        "1", "true", "yes", "on",
+        "1",
+        "true",
+        "yes",
+        "on",
     )
 
 
@@ -76,6 +81,7 @@ def is_allowed(host: str | None) -> bool:
 
 # --- SEC-005: DNS / resolved-IP guard --------------------------------------
 
+
 def is_public_ip(ip_str: str) -> bool:
     """True only for routable, public IPs (rejects private/loopback/link-local/…)."""
     try:
@@ -83,18 +89,16 @@ def is_public_ip(ip_str: str) -> bool:
     except ValueError:
         return False
     return not (
-        ip.is_private
-        or ip.is_loopback
-        or ip.is_link_local
-        or ip.is_multicast
-        or ip.is_reserved
-        or ip.is_unspecified
+        ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved or ip.is_unspecified
     )
 
 
 def _dns_guard_enabled() -> bool:
     return os.environ.get("MCP_EGRESS_DNS_GUARD_DISABLED", "").strip().lower() not in (
-        "1", "true", "yes", "on",
+        "1",
+        "true",
+        "yes",
+        "on",
     )
 
 

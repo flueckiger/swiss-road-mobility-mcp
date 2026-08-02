@@ -37,15 +37,9 @@ _DX2 = "http://datex2.eu/schema/2/2_0"
 _SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"
 _XSI = "http://www.w3.org/2001/XMLSchema-instance"
 
-COUNTERS_URL = (
-    "https://api.opentransportdata.swiss/TDP/Soap_Datex2/TrafficCounters/Pull"
-)
-SOAP_ACTION_SITES = (
-    "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullMeasurementSiteTable"
-)
-SOAP_ACTION_DATA = (
-    "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullMeasuredData"
-)
+COUNTERS_URL = "https://api.opentransportdata.swiss/TDP/Soap_Datex2/TrafficCounters/Pull"
+SOAP_ACTION_SITES = "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullMeasurementSiteTable"
+SOAP_ACTION_DATA = "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullMeasuredData"
 
 # ---------------------------------------------------------------------------
 # Cache-Konfiguration
@@ -133,9 +127,11 @@ def _make_data_body(site_ids: list[str]) -> str:
   </soap:Body>
 </soap:Envelope>"""
 
+
 # ---------------------------------------------------------------------------
 # XML-Hilfsfunktionen
 # ---------------------------------------------------------------------------
+
 
 def _t(tag: str) -> str:
     return f"{{{_DX2}}}{tag}"
@@ -194,12 +190,11 @@ async def _soap_post(api_key: str, soap_action: str, body: str) -> ET.Element:
                     "Kostenlose Registrierung auf api-manager.opentransportdata.swiss. "
                     "Dann OPENTRANSPORTDATA_API_KEY als Umgebungsvariable setzen."
                 )
-            raise APIError(
-                f"HTTP {sc} von TrafficCounters-API: {e.response.text[:300]}"
-            )
+            raise APIError(f"HTTP {sc} von TrafficCounters-API: {e.response.text[:300]}")
         except httpx.TimeoutException:
-            raise APIError("Timeout (45s) bei TrafficCounters-API. "
-                           "Die Messstellentabelle ist gross – bitte erneut versuchen.")
+            raise APIError(
+                "Timeout (45s) bei TrafficCounters-API. Die Messstellentabelle ist gross – bitte erneut versuchen."
+            )
         except httpx.ConnectError as e:
             raise APIError(f"Verbindungsfehler zur TrafficCounters-API: {e}")
 
@@ -224,6 +219,7 @@ async def _soap_post(api_key: str, soap_action: str, body: str) -> ET.Element:
 # ---------------------------------------------------------------------------
 # Statische Messstellentabelle
 # ---------------------------------------------------------------------------
+
 
 async def fetch_measurement_sites(api_key: str) -> dict[str, dict]:
     """
@@ -312,6 +308,7 @@ async def fetch_measurement_sites(api_key: str) -> dict[str, dict]:
 # ---------------------------------------------------------------------------
 # Dynamische Messdaten
 # ---------------------------------------------------------------------------
+
 
 async def fetch_measured_data(
     api_key: str,
@@ -453,6 +450,7 @@ async def fetch_measured_data(
 # Geo-Suche in der Messstellentabelle
 # ---------------------------------------------------------------------------
 
+
 def find_nearby_sites(
     sites: dict[str, dict],
     latitude: float,
@@ -476,8 +474,10 @@ def find_nearby_sites(
 
     for site in sites.values():
         dist_km = haversine_km(
-            latitude, longitude,
-            site["latitude"], site["longitude"],
+            latitude,
+            longitude,
+            site["latitude"],
+            site["longitude"],
         )
         if dist_km <= radius_km:
             enriched = {**site, "distance_km": round(dist_km, 3)}

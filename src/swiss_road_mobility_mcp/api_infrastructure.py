@@ -31,6 +31,7 @@ logger = logging.getLogger("swiss-road-mobility-mcp")
 # Rate Limiter – Der Türsteher
 # =============================================================================
 
+
 @dataclass
 class RateLimiter:
     """
@@ -40,6 +41,7 @@ class RateLimiter:
     Metapher: Wie ein Zebrastreifen – man DARF rüber,
     aber rennt trotzdem nicht blindlings los.
     """
+
     max_requests: int
     window_seconds: float
     _timestamps: list = field(default_factory=list)
@@ -66,6 +68,7 @@ class RateLimiter:
 # =============================================================================
 # Cache – Die Wandtafel
 # =============================================================================
+
 
 @dataclass
 class CacheEntry:
@@ -127,6 +130,7 @@ class SimpleCache:
 # HTTP Client – Offen, aber höflich
 # =============================================================================
 
+
 class MobilityHTTPClient:
     """
     Zentraler HTTP-Client für offene Mobilitäts-APIs.
@@ -186,11 +190,9 @@ class MobilityHTTPClient:
             if not limiter.can_proceed():
                 wait = limiter.wait_time()
                 if wait > 10:
-                    raise APIError(
-                        f"Rate Limit für '{limiter_name}' erreicht. "
-                        f"Nächste Abfrage in {wait:.0f}s möglich."
-                    )
+                    raise APIError(f"Rate Limit für '{limiter_name}' erreicht. Nächste Abfrage in {wait:.0f}s möglich.")
                 import asyncio
+
                 await asyncio.sleep(wait)
             limiter.record()
 
@@ -208,9 +210,7 @@ class MobilityHTTPClient:
                 url,
                 e.response.text[:200],
             )
-            raise APIError(
-                f"Die Datenquelle antwortete mit HTTP {e.response.status_code}."
-            )
+            raise APIError(f"Die Datenquelle antwortete mit HTTP {e.response.status_code}.")
         except httpx.TimeoutException:
             raise APIError(f"Timeout nach 30s für {url}")
         except httpx.ConnectError:
@@ -229,6 +229,7 @@ class MobilityHTTPClient:
 # Geo-Hilfsfunktionen
 # =============================================================================
 
+
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     Distanz zwischen zwei GPS-Koordinaten in Kilometern.
@@ -239,12 +240,7 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     R = 6371.0  # Erdradius in km
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
-    a = (
-        math.sin(dlat / 2) ** 2
-        + math.cos(math.radians(lat1))
-        * math.cos(math.radians(lat2))
-        * math.sin(dlon / 2) ** 2
-    )
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
@@ -252,6 +248,8 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 # Fehlerklassen
 # =============================================================================
 
+
 class APIError(Exception):
     """Allgemeiner API-Fehler."""
+
     pass
