@@ -25,6 +25,7 @@ from swiss_road_mobility_mcp.logging_config import JsonFormatter, configure_logg
 # OBS-001 — structured execution errors with stable codes
 # ===========================================================================
 
+
 class TestErrorEnvelope:
     # SDK-002: the error helpers now return dicts (structured content), not
     # JSON strings.
@@ -46,6 +47,7 @@ class TestErrorEnvelope:
 # ===========================================================================
 # OBS-002 — mask details, log server-side
 # ===========================================================================
+
 
 class TestMasking:
     def test_unexpected_error_masks_and_logs(self, caplog):
@@ -80,6 +82,7 @@ class TestMasking:
 # ===========================================================================
 # OBS-003 — structured (JSON) logging
 # ===========================================================================
+
 
 class TestJsonFormatter:
     def test_basic_record(self):
@@ -121,10 +124,12 @@ class TestConfigureLogging:
         try:
             monkeypatch.setenv("MCP_LOG_FORMAT", "json")
             configure_logging()
-            assert any(isinstance(getattr(h, "formatter", None), JsonFormatter)
-                       for h in root.handlers)
-            assert all(getattr(h, "stream", sys.stderr) is sys.stderr
-                       for h in root.handlers if isinstance(h, logging.StreamHandler))
+            assert any(isinstance(getattr(h, "formatter", None), JsonFormatter) for h in root.handlers)
+            assert all(
+                getattr(h, "stream", sys.stderr) is sys.stderr
+                for h in root.handlers
+                if isinstance(h, logging.StreamHandler)
+            )
         finally:
             self._restore(saved_handlers, saved_level)
 
@@ -134,7 +139,6 @@ class TestConfigureLogging:
         try:
             monkeypatch.delenv("MCP_LOG_FORMAT", raising=False)
             configure_logging()
-            assert not any(isinstance(getattr(h, "formatter", None), JsonFormatter)
-                           for h in root.handlers)
+            assert not any(isinstance(getattr(h, "formatter", None), JsonFormatter) for h in root.handlers)
         finally:
             self._restore(saved_handlers, saved_level)

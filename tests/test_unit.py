@@ -39,6 +39,7 @@ async def client():
 # api_infrastructure — pure logic (no network)
 # ===========================================================================
 
+
 class TestInfraPureLogic:
     def test_haversine_zero_distance(self):
         assert haversine_km(47.3769, 8.5417, 47.3769, 8.5417) == pytest.approx(0.0, abs=1e-9)
@@ -91,6 +92,7 @@ class TestInfraHTTP:
 # shared_mobility
 # ===========================================================================
 
+
 def _vehicle(vid, lon, lat, available=True, vtype="E-Bike"):
     return {
         "attributes": {
@@ -107,12 +109,8 @@ def _vehicle(vid, lon, lat, available=True, vtype="E-Bike"):
 class TestSharedMobility:
     @respx.mock
     async def test_find_nearby_happy_path(self, client):
-        respx.get(f"{BASE_URL}/identify").respond(
-            200, json=[_vehicle("v1", 8.54, 47.37), _vehicle("v2", 8.55, 47.38)]
-        )
-        result = await shared_mobility.find_nearby_vehicles(
-            client, longitude=8.54, latitude=47.37, radius_meters=500
-        )
+        respx.get(f"{BASE_URL}/identify").respond(200, json=[_vehicle("v1", 8.54, 47.37), _vehicle("v2", 8.55, 47.38)])
+        result = await shared_mobility.find_nearby_vehicles(client, longitude=8.54, latitude=47.37, radius_meters=500)
         assert result["count"] == 2
         assert result["by_type"] == {"E-Bike": 2}
         assert result["vehicles"][0]["provider"] == "PubliBike"
@@ -120,12 +118,9 @@ class TestSharedMobility:
     @respx.mock
     async def test_find_nearby_only_available_filters(self, client):
         respx.get(f"{BASE_URL}/identify").respond(
-            200, json=[_vehicle("v1", 8.54, 47.37, available=True),
-                       _vehicle("v2", 8.55, 47.38, available=False)]
+            200, json=[_vehicle("v1", 8.54, 47.37, available=True), _vehicle("v2", 8.55, 47.38, available=False)]
         )
-        result = await shared_mobility.find_nearby_vehicles(
-            client, longitude=8.54, latitude=47.37, only_available=True
-        )
+        result = await shared_mobility.find_nearby_vehicles(client, longitude=8.54, latitude=47.37, only_available=True)
         assert result["count"] == 1
 
     @respx.mock
@@ -145,8 +140,15 @@ class TestSharedMobility:
     @respx.mock
     async def test_list_providers_happy_path(self, client):
         respx.get(f"{BASE_URL}/providers").respond(
-            200, json=[{"provider_id": "publibike", "name": "PubliBike",
-                        "vehicle_type": ["E-Bike", "Bicycle"], "timezone": "Europe/Zurich"}]
+            200,
+            json=[
+                {
+                    "provider_id": "publibike",
+                    "name": "PubliBike",
+                    "vehicle_type": ["E-Bike", "Bicycle"],
+                    "timezone": "Europe/Zurich",
+                }
+            ],
         )
         result = await shared_mobility.list_providers(client)
         assert result["count"] == 1
@@ -158,16 +160,22 @@ class TestSharedMobility:
 # ev_charging
 # ===========================================================================
 
+
 class TestEvCharging:
     @respx.mock
     async def test_find_nearby_chargers_distance_and_status(self, client):
-        respx.get(ev_charging.GEOJSON_URL).respond(200, json={"features": [
-            {"id": "st-near", "geometry": {"coordinates": [8.5417, 47.3769]}, "properties": {}},
-            {"id": "st-far", "geometry": {"coordinates": [6.1432, 46.2044]}, "properties": {}},  # Genf
-        ]})
-        respx.get(ev_charging.STATUS_URL).respond(200, json={"EVSEStatuses": [
-            {"EVSEStatusRecord": [{"EvseID": "st-near", "EVSEStatus": "Available"}]}
-        ]})
+        respx.get(ev_charging.GEOJSON_URL).respond(
+            200,
+            json={
+                "features": [
+                    {"id": "st-near", "geometry": {"coordinates": [8.5417, 47.3769]}, "properties": {}},
+                    {"id": "st-far", "geometry": {"coordinates": [6.1432, 46.2044]}, "properties": {}},  # Genf
+                ]
+            },
+        )
+        respx.get(ev_charging.STATUS_URL).respond(
+            200, json={"EVSEStatuses": [{"EVSEStatusRecord": [{"EvseID": "st-near", "EVSEStatus": "Available"}]}]}
+        )
         result = await ev_charging.find_nearby_chargers(
             client, longitude=8.5417, latitude=47.3769, radius_km=2.0, include_details=False
         )
@@ -178,13 +186,20 @@ class TestEvCharging:
 
     @respx.mock
     async def test_get_charger_status_overall_statistics(self, client):
-        respx.get(ev_charging.STATUS_URL).respond(200, json={"EVSEStatuses": [
-            {"EVSEStatusRecord": [
-                {"EvseID": "a", "EVSEStatus": "Available"},
-                {"EvseID": "b", "EVSEStatus": "Occupied"},
-                {"EvseID": "c", "EVSEStatus": "Available"},
-            ]}
-        ]})
+        respx.get(ev_charging.STATUS_URL).respond(
+            200,
+            json={
+                "EVSEStatuses": [
+                    {
+                        "EVSEStatusRecord": [
+                            {"EvseID": "a", "EVSEStatus": "Available"},
+                            {"EvseID": "b", "EVSEStatus": "Occupied"},
+                            {"EvseID": "c", "EVSEStatus": "Available"},
+                        ]
+                    }
+                ]
+            },
+        )
         result = await ev_charging.get_charger_status(client, station_ids=None)
         assert result["total_charging_points"] == 3
         assert sum(result["status_distribution"].values()) == 3
@@ -194,22 +209,33 @@ class TestEvCharging:
         respx.get(ev_charging.GEOJSON_URL).respond(200, json={"features": []})
         respx.get(ev_charging.STATUS_URL).respond(200, json={"EVSEStatuses": []})
         with pytest.raises(APIError):
-            await ev_charging.find_nearby_chargers(
-                client, longitude=8.54, latitude=47.37, include_details=False
-            )
+            await ev_charging.find_nearby_chargers(client, longitude=8.54, latitude=47.37, include_details=False)
 
 
 # ===========================================================================
 # geo_admin (uses per-call httpx.AsyncClient — respx intercepts globally)
 # ===========================================================================
 
+
 class TestGeoAdmin:
     @respx.mock
     async def test_geocode_address_happy_path(self):
-        respx.get(geo_admin.SEARCH_URL).respond(200, json={"results": [
-            {"attrs": {"label": "<b>Bahnhofstrasse 1</b> 8001 Zürich",
-                       "lat": 47.3769, "lon": 8.5417, "featureId": "123", "detail": "x"}}
-        ]})
+        respx.get(geo_admin.SEARCH_URL).respond(
+            200,
+            json={
+                "results": [
+                    {
+                        "attrs": {
+                            "label": "<b>Bahnhofstrasse 1</b> 8001 Zürich",
+                            "lat": 47.3769,
+                            "lon": 8.5417,
+                            "featureId": "123",
+                            "detail": "x",
+                        }
+                    }
+                ]
+            },
+        )
         result = await geo_admin.geocode_address("Bahnhofstrasse 1 Zürich")
         assert result["found"] == 1
         hit = result["results"][0]

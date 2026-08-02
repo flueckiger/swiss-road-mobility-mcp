@@ -32,12 +32,8 @@ _DX2 = "http://datex2.eu/schema/2/2_0"
 _SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"
 _XSI = "http://www.w3.org/2001/XMLSchema-instance"
 
-SITUATIONS_URL = (
-    "https://api.opentransportdata.swiss/TDP/Soap_Datex2/TrafficSituations/Pull"
-)
-SITUATIONS_SOAP_ACTION = (
-    "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullTrafficMessages"
-)
+SITUATIONS_URL = "https://api.opentransportdata.swiss/TDP/Soap_Datex2/TrafficSituations/Pull"
+SITUATIONS_SOAP_ACTION = "http://opentransportdata.swiss/TDP/Soap_Datex2/Pull/v1/pullTrafficMessages"
 
 # ---------------------------------------------------------------------------
 # SOAP Request Body (immer identisch – ASTRA-Vorgabe)
@@ -118,6 +114,7 @@ _SEVERITY_ORDER = {
 # ---------------------------------------------------------------------------
 # XML-Hilfsfunktionen
 # ---------------------------------------------------------------------------
+
 
 def _t(tag: str) -> str:
     """DATEX II vollständiger Namespace-Tag."""
@@ -230,10 +227,7 @@ def _parse_situation(sit_el: ET.Element) -> dict | None:
     Returns None wenn keine Records vorhanden.
     """
     sit_id = sit_el.get("id", "unknown")
-    records = [
-        _parse_situation_record(rec_el)
-        for rec_el in sit_el.findall(_t("situationRecord"))
-    ]
+    records = [_parse_situation_record(rec_el) for rec_el in sit_el.findall(_t("situationRecord"))]
     if not records:
         return None
     return {"id": sit_id, "records": records}
@@ -247,6 +241,7 @@ def _is_active(validity_status: str) -> bool:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 async def fetch_situations(
     api_key: str,
@@ -302,9 +297,7 @@ async def fetch_situations(
                     "Kostenlose Registrierung: api-manager.opentransportdata.swiss. "
                     "Umgebungsvariable OPENTRANSPORTDATA_API_KEY setzen."
                 )
-            raise APIError(
-                f"HTTP {sc} von TrafficSituations-API: {e.response.text[:300]}"
-            )
+            raise APIError(f"HTTP {sc} von TrafficSituations-API: {e.response.text[:300]}")
         except httpx.TimeoutException:
             raise APIError("Timeout (30s) bei TrafficSituations-API.")
         except httpx.ConnectError as e:
@@ -346,9 +339,7 @@ async def fetch_situations(
         records = parsed["records"]
 
         if active_only:
-            records = [
-                r for r in records if _is_active(r.get("validity_status", ""))
-            ]
+            records = [r for r in records if _is_active(r.get("validity_status", ""))]
             if not records:
                 continue
 

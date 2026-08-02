@@ -29,9 +29,7 @@ logger = logging.getLogger("swiss-road-mobility-mcp")
 ProgressCallback = Callable[[float, float, str], Awaitable[None]]
 
 
-async def _report(
-    cb: ProgressCallback | None, done: float, total: float, message: str
-) -> None:
+async def _report(cb: ProgressCallback | None, done: float, total: float, message: str) -> None:
     """Invoke the progress callback if one was supplied (no-op otherwise)."""
     if cb is not None:
         await cb(done, total, message)
@@ -39,16 +37,13 @@ async def _report(
 
 # Endpunkte für ich-tanke-strom.ch Daten
 GEOJSON_URL = (
-    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/"
-    "data/ch.bfe.ladestellen-elektromobilitaet_de.json"
+    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/data/ch.bfe.ladestellen-elektromobilitaet_de.json"
 )
 STATUS_URL = (
-    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/"
-    "status/ch.bfe.ladestellen-elektromobilitaet.json"
+    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/status/ch.bfe.ladestellen-elektromobilitaet.json"
 )
 EVSEDATA_URL = (
-    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/"
-    "data/ch.bfe.ladestellen-elektromobilitaet.json"
+    "https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/data/ch.bfe.ladestellen-elektromobilitaet.json"
 )
 
 # Bekannte Stecker-Typen
@@ -173,11 +168,7 @@ async def _load_station_details(client: MobilityHTTPClient) -> dict[str, dict]:
                             "payment": rec.get("PaymentOptions", []),
                             "renewable_energy": rec.get("RenewableEnergy", False),
                             "hotline": rec.get("HotlinePhoneNumber", ""),
-                            "names": [
-                                n.get("value", "")
-                                for n in names_raw
-                                if isinstance(n, dict) and n.get("value")
-                            ],
+                            "names": [n.get("value", "") for n in names_raw if isinstance(n, dict) and n.get("value")],
                         }
 
     return details
@@ -335,9 +326,7 @@ async def find_nearby_chargers(
         },
         "total_found": total,
         "returned": len(results),
-        "status_summary": {
-            STATUS_MAP.get(k, k): v for k, v in status_counts.items()
-        },
+        "status_summary": {STATUS_MAP.get(k, k): v for k, v in status_counts.items()},
         "stations": results,
         "source": "ich-tanke-strom.ch (Bundesamt für Energie BFE)",
         "hint": (
@@ -381,8 +370,6 @@ async def get_charger_status(
 
     return {
         "total_charging_points": len(status_map),
-        "status_distribution": {
-            STATUS_MAP.get(k, k): v for k, v in sorted(counts.items())
-        },
+        "status_distribution": {STATUS_MAP.get(k, k): v for k, v in sorted(counts.items())},
         "source": "ich-tanke-strom.ch (Echtzeit)",
     }

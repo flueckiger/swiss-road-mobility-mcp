@@ -111,6 +111,7 @@ mcp = MCPServer(
 # Shared HTTP Client accessor
 # ===========================================================================
 
+
 def _get_client() -> MobilityHTTPClient:
     """Return the lifespan-managed shared client.
 
@@ -149,10 +150,10 @@ def _require_api_key() -> str:
     return key
 
 
-
 # ===========================================================================
 # Input Models – Shared Mobility
 # ===========================================================================
+
 
 class FindSharingInput(BaseModel):
     """Input for finding nearby shared mobility vehicles/stations."""
@@ -171,8 +172,7 @@ class FindSharingInput(BaseModel):
     longitude: float = Field(
         ...,
         description=(
-            "Longitude (Längengrad) of search center. "
-            "Examples: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"
+            "Longitude (Längengrad) of search center. Examples: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"
         ),
         ge=5.5,
         le=10.8,
@@ -211,10 +211,7 @@ class SearchSharingInput(BaseModel):
 
     search_text: str = Field(
         ...,
-        description=(
-            "Search text for station name or address. "
-            "Examples: 'Bahnhof', 'ETH', 'Bellevue', 'Hauptbahnhof'"
-        ),
+        description=("Search text for station name or address. Examples: 'Bahnhof', 'ETH', 'Bellevue', 'Hauptbahnhof'"),
         min_length=2,
         max_length=200,
     )
@@ -237,6 +234,7 @@ class SearchSharingInput(BaseModel):
 # Input Models – EV Charging
 # ===========================================================================
 
+
 class FindChargerInput(BaseModel):
     """Input for finding nearby EV charging stations."""
 
@@ -244,19 +242,13 @@ class FindChargerInput(BaseModel):
 
     latitude: float = Field(
         ...,
-        description=(
-            "Latitude of search center. "
-            "Examples: 47.3769 (Zürich HB), 46.9480 (Bern)"
-        ),
+        description=("Latitude of search center. Examples: 47.3769 (Zürich HB), 46.9480 (Bern)"),
         ge=45.5,
         le=48.0,
     )
     longitude: float = Field(
         ...,
-        description=(
-            "Longitude of search center. "
-            "Examples: 8.5417 (Zürich HB), 7.4474 (Bern)"
-        ),
+        description=("Longitude of search center. Examples: 8.5417 (Zürich HB), 7.4474 (Bern)"),
         ge=5.5,
         le=10.8,
     )
@@ -269,16 +261,12 @@ class FindChargerInput(BaseModel):
     only_available: bool = Field(
         default=False,
         description=(
-            "Only show stations with status 'Available' (free). "
-            "Default: false (show all, including occupied/unknown)"
+            "Only show stations with status 'Available' (free). Default: false (show all, including occupied/unknown)"
         ),
     )
     include_details: bool = Field(
         default=True,
-        description=(
-            "Include full details (plug types, power, operator). "
-            "Set to false for faster, smaller response."
-        ),
+        description=("Include full details (plug types, power, operator). Set to false for faster, smaller response."),
     )
     limit: int = Field(
         default=20,
@@ -306,6 +294,7 @@ class ChargerStatusInput(BaseModel):
 # ===========================================================================
 # Tool 1: Find Nearby Sharing Vehicles
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_find_sharing",
@@ -354,6 +343,7 @@ async def road_find_sharing(params: FindSharingInput) -> dict[str, Any]:
 # Tool 2: Search Sharing Stations by Name
 # ===========================================================================
 
+
 @mcp.tool(
     name="road_search_sharing",
     annotations={
@@ -393,6 +383,7 @@ async def road_search_sharing(params: SearchSharingInput) -> dict[str, Any]:
 # Tool 3: List Sharing Providers
 # ===========================================================================
 
+
 @mcp.tool(
     name="road_sharing_providers",
     annotations={
@@ -427,6 +418,7 @@ async def road_sharing_providers() -> dict[str, Any]:
 # Tool 4: Find Nearby EV Chargers
 # ===========================================================================
 
+
 @mcp.tool(
     name="road_find_charger",
     annotations={
@@ -454,10 +446,7 @@ async def road_find_charger(params: FindChargerInput, ctx: Context) -> dict[str,
         charging power (kW), and operator information.
     """
     try:
-        await ctx.info(
-            f"Searching EV chargers within {params.radius_km} km of "
-            f"({params.latitude}, {params.longitude})"
-        )
+        await ctx.info(f"Searching EV chargers within {params.radius_km} km of ({params.latitude}, {params.longitude})")
 
         async def _progress(done: float, total: float, message: str) -> None:
             await ctx.report_progress(progress=done, total=total, message=message)
@@ -483,6 +472,7 @@ async def road_find_charger(params: FindChargerInput, ctx: Context) -> dict[str,
 # ===========================================================================
 # Tool 5: Check Charger Status
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_charger_status",
@@ -522,6 +512,7 @@ async def road_charger_status(params: ChargerStatusInput) -> dict[str, Any]:
 # ===========================================================================
 # Tool 6: System Status
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_check_status",
@@ -640,10 +631,10 @@ async def road_check_status(ctx: Context) -> dict[str, Any]:
     }
 
 
-
 # ===========================================================================
 # Input Models – Phase 2: Traffic Situations
 # ===========================================================================
+
 
 class TrafficSituationsInput(BaseModel):
     """Input für Verkehrsmeldungen (DATEX II Phase 2)."""
@@ -667,8 +658,7 @@ class TrafficSituationsInput(BaseModel):
     active_only: bool = Field(
         default=True,
         description=(
-            "Nur aktive Meldungen anzeigen (nicht widerrufene). "
-            "Default: true. Auf false setzen für Verlaufsdaten."
+            "Nur aktive Meldungen anzeigen (nicht widerrufene). Default: true. Auf false setzen für Verlaufsdaten."
         ),
     )
     limit: int = Field(
@@ -683,6 +673,7 @@ class TrafficSituationsInput(BaseModel):
 # Input Models – Phase 2: Traffic Counters
 # ===========================================================================
 
+
 class TrafficCountersInput(BaseModel):
     """Input für Echtzeit-Verkehrsaufkommen (DATEX II Phase 2)."""
 
@@ -691,18 +682,14 @@ class TrafficCountersInput(BaseModel):
     latitude: float = Field(
         ...,
         description=(
-            "Breitengrad des Suchzentrums. "
-            "Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.5596 (Winterthur)"
+            "Breitengrad des Suchzentrums. Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.5596 (Winterthur)"
         ),
         ge=45.5,
         le=48.0,
     )
     longitude: float = Field(
         ...,
-        description=(
-            "Längengrad des Suchzentrums. "
-            "Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"
-        ),
+        description=("Längengrad des Suchzentrums. Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"),
         ge=5.5,
         le=10.8,
     )
@@ -754,6 +741,7 @@ class CounterSitesInput(BaseModel):
 # ===========================================================================
 # Tool 7: Traffic Situations (Phase 2 – API-Key erforderlich)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_traffic_situations",
@@ -810,6 +798,7 @@ async def road_traffic_situations(params: TrafficSituationsInput) -> dict[str, A
 # ===========================================================================
 # Tool 8: Traffic Counters – Geo-Suche + Echtzeit-Daten (Phase 2)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_traffic_counters",
@@ -901,10 +890,7 @@ async def road_traffic_counters(params: TrafficCountersInput) -> dict[str, Any]:
             meas = meas_by_id.get(site["id"], {})
             combined = {**site}
             if meas:
-                combined.update({
-                    k: v for k, v in meas.items()
-                    if k != "site_id"
-                })
+                combined.update({k: v for k, v in meas.items() if k != "site_id"})
             enriched.append(combined)
 
         return {
@@ -929,6 +915,7 @@ async def road_traffic_counters(params: TrafficCountersInput) -> dict[str, Any]:
 # ===========================================================================
 # Tool 9: Counter Sites – Messstellen in der Nähe (Phase 2)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_counter_sites",
@@ -986,8 +973,7 @@ async def road_counter_sites(params: CounterSitesInput) -> dict[str, Any]:
             "found": len(nearby),
             "total_swiss_stations": len(sites),
             "hint": (
-                "Nutze road_traffic_counters mit denselben Koordinaten "
-                "für Echtzeit-Messdaten (Fahrzeuge/h, km/h)."
+                "Nutze road_traffic_counters mit denselben Koordinaten für Echtzeit-Messdaten (Fahrzeuge/h, km/h)."
             ),
             "stations": nearby,
         }
@@ -997,9 +983,11 @@ async def road_counter_sites(params: CounterSitesInput) -> dict[str, Any]:
     except Exception:
         return unexpected_error()
 
+
 # ===========================================================================
 # Input Models – Phase 3: Park & Rail
 # ===========================================================================
+
 
 class ParkRailNearbyInput(BaseModel):
     """Input für Park & Rail Suche nach Position."""
@@ -1009,18 +997,14 @@ class ParkRailNearbyInput(BaseModel):
     latitude: float = Field(
         ...,
         description=(
-            "Breitengrad des Suchzentrums. "
-            "Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.5596 (Winterthur)"
+            "Breitengrad des Suchzentrums. Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.5596 (Winterthur)"
         ),
         ge=45.5,
         le=48.0,
     )
     longitude: float = Field(
         ...,
-        description=(
-            "Längengrad des Suchzentrums. "
-            "Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"
-        ),
+        description=("Längengrad des Suchzentrums. Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 8.7240 (Winterthur)"),
         ge=5.5,
         le=10.8,
     )
@@ -1045,10 +1029,7 @@ class ParkRailByNameInput(BaseModel):
 
     station_name: str = Field(
         ...,
-        description=(
-            "Bahnhofsname für die Suche. "
-            "Beispiele: 'Zürich HB', 'Winterthur', 'Dietikon', 'Bern'"
-        ),
+        description=("Bahnhofsname für die Suche. Beispiele: 'Zürich HB', 'Winterthur', 'Dietikon', 'Bern'"),
         min_length=2,
         max_length=100,
     )
@@ -1063,6 +1044,7 @@ class ParkRailByNameInput(BaseModel):
 # ===========================================================================
 # Input Models – Phase 3: Mobility Snapshot
 # ===========================================================================
+
 
 class MobilitySnapshotInput(BaseModel):
     """Input für vollständiges Mobilitäts-Lagebild."""
@@ -1105,6 +1087,7 @@ class MobilitySnapshotInput(BaseModel):
 # Input Models – Phase 3: Multimodaler Reiseplan
 # ===========================================================================
 
+
 class MultimodalPlanInput(BaseModel):
     """Input für den multimodalen Reiseplaner."""
 
@@ -1121,18 +1104,14 @@ class MultimodalPlanInput(BaseModel):
     )
     start_longitude: float = Field(
         ...,
-        description=(
-            "Längengrad der Startposition. "
-            "Beispiel: 8.4034 (Dietikon), 8.5417 (Zürich HB)"
-        ),
+        description=("Längengrad der Startposition. Beispiel: 8.4034 (Dietikon), 8.5417 (Zürich HB)"),
         ge=5.5,
         le=10.8,
     )
     destination: str = Field(
         ...,
         description=(
-            "Zielort als Name (Bahnhof oder Stadt). "
-            "Beispiele: 'Bern', 'Zürich HB', 'Basel SBB', 'Luzern', 'Winterthur'"
+            "Zielort als Name (Bahnhof oder Stadt). Beispiele: 'Bern', 'Zürich HB', 'Basel SBB', 'Luzern', 'Winterthur'"
         ),
         min_length=2,
         max_length=100,
@@ -1151,6 +1130,7 @@ class MultimodalPlanInput(BaseModel):
 # ===========================================================================
 # Tool 10: Park & Rail in der Nähe (Phase 3 – kein API-Key!)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_park_rail",
@@ -1196,6 +1176,7 @@ async def road_park_rail(params: ParkRailNearbyInput) -> dict[str, Any]:
 # ===========================================================================
 # Tool 11: Mobility Snapshot – Vollständiges Lagebild (Phase 3)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_mobility_snapshot",
@@ -1262,6 +1243,7 @@ async def road_mobility_snapshot(params: MobilitySnapshotInput, ctx: Context) ->
 # ===========================================================================
 # Tool 12: Multimodaler Reiseplan (Phase 3 – Cross-Server-Logik)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_multimodal_plan",
@@ -1330,6 +1312,7 @@ async def road_multimodal_plan(params: MultimodalPlanInput, ctx: Context) -> dic
 # Input Models – Phase 4: geo.admin.ch
 # ===========================================================================
 
+
 class GeocodeAddressInput(BaseModel):
     """Input für Adress-Geocoding via amtliches Gebäudeadressverzeichnis."""
 
@@ -1362,19 +1345,13 @@ class ReverseGeocodeInput(BaseModel):
 
     latitude: float = Field(
         ...,
-        description=(
-            "Breitengrad (WGS84). "
-            "Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.0503 (Fribourg)"
-        ),
+        description=("Breitengrad (WGS84). Beispiele: 47.3769 (Zürich HB), 46.9480 (Bern), 47.0503 (Fribourg)"),
         ge=45.5,
         le=48.0,
     )
     longitude: float = Field(
         ...,
-        description=(
-            "Längengrad (WGS84). "
-            "Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 7.1560 (Fribourg)"
-        ),
+        description=("Längengrad (WGS84). Beispiele: 8.5417 (Zürich HB), 7.4474 (Bern), 7.1560 (Fribourg)"),
         ge=5.5,
         le=10.8,
     )
@@ -1393,19 +1370,13 @@ class ClassifyRoadInput(BaseModel):
 
     latitude: float = Field(
         ...,
-        description=(
-            "Breitengrad des Standorts. "
-            "Beispiele: 47.3769 (Zürich HB), 47.0061 (A1 bei Lausanne)"
-        ),
+        description=("Breitengrad des Standorts. Beispiele: 47.3769 (Zürich HB), 47.0061 (A1 bei Lausanne)"),
         ge=45.5,
         le=48.0,
     )
     longitude: float = Field(
         ...,
-        description=(
-            "Längengrad des Standorts. "
-            "Beispiele: 8.5417 (Zürich HB), 6.6335 (A1 bei Lausanne)"
-        ),
+        description=("Längengrad des Standorts. Beispiele: 8.5417 (Zürich HB), 6.6335 (A1 bei Lausanne)"),
         ge=5.5,
         le=10.8,
     )
@@ -1430,6 +1401,7 @@ class ClassifyRoadInput(BaseModel):
 # ===========================================================================
 # Tool 13: Adress-Geocoding (Phase 4 – kein API-Key)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_geocode_address",
@@ -1479,6 +1451,7 @@ async def road_geocode_address(params: GeocodeAddressInput) -> dict[str, Any]:
 # Tool 14: Reverse Geocoding (Phase 4 – kein API-Key)
 # ===========================================================================
 
+
 @mcp.tool(
     name="road_reverse_geocode",
     annotations={
@@ -1525,6 +1498,7 @@ async def road_reverse_geocode(params: ReverseGeocodeInput) -> dict[str, Any]:
 # ===========================================================================
 # Tool 15: Strassenklassifikation (Phase 4 – kein API-Key)
 # ===========================================================================
+
 
 @mcp.tool(
     name="road_classify_road",
@@ -1593,6 +1567,7 @@ async def road_classify_road(params: ClassifyRoadInput) -> dict[str, Any]:
 # and templating MCP primitives are covered. Full rationale + capability audit:
 # docs/ARCHITECTURE.md.
 
+
 @mcp.resource("roadmobility://data-sources")
 def data_sources_catalog() -> str:
     """Catalogue of the upstream open-data sources this server aggregates.
@@ -1603,19 +1578,37 @@ def data_sources_catalog() -> str:
     return json.dumps(
         {
             "data_sources": [
-                {"name": "sharedmobility.ch", "host": "api.sharedmobility.ch",
-                 "api_key": False, "domain": "Shared mobility (bikes, e-scooters, cars)"},
-                {"name": "ich-tanke-strom.ch", "host": "data.geo.admin.ch",
-                 "api_key": False, "domain": "EV charging (locations + realtime status)"},
-                {"name": "geo.admin.ch / swisstopo", "host": "api3.geo.admin.ch",
-                 "api_key": False, "domain": "Geocoding + road classification"},
-                {"name": "SBB Open Data", "host": "data.sbb.ch",
-                 "api_key": False, "domain": "Park & Rail facilities"},
-                {"name": "transport.opendata.ch", "host": "transport.opendata.ch",
-                 "api_key": False, "domain": "Public-transport journey planning"},
-                {"name": "opentransportdata.swiss (ASTRA DATEX II)",
-                 "host": "api.opentransportdata.swiss",
-                 "api_key": True, "domain": "Traffic situations + counters"},
+                {
+                    "name": "sharedmobility.ch",
+                    "host": "api.sharedmobility.ch",
+                    "api_key": False,
+                    "domain": "Shared mobility (bikes, e-scooters, cars)",
+                },
+                {
+                    "name": "ich-tanke-strom.ch",
+                    "host": "data.geo.admin.ch",
+                    "api_key": False,
+                    "domain": "EV charging (locations + realtime status)",
+                },
+                {
+                    "name": "geo.admin.ch / swisstopo",
+                    "host": "api3.geo.admin.ch",
+                    "api_key": False,
+                    "domain": "Geocoding + road classification",
+                },
+                {"name": "SBB Open Data", "host": "data.sbb.ch", "api_key": False, "domain": "Park & Rail facilities"},
+                {
+                    "name": "transport.opendata.ch",
+                    "host": "transport.opendata.ch",
+                    "api_key": False,
+                    "domain": "Public-transport journey planning",
+                },
+                {
+                    "name": "opentransportdata.swiss (ASTRA DATEX II)",
+                    "host": "api.opentransportdata.swiss",
+                    "api_key": True,
+                    "domain": "Traffic situations + counters",
+                },
             ],
             "note": (
                 "All hosts are egress allow-listed (SEC-004/021). Phase-2 sources "
@@ -1643,6 +1636,7 @@ def plan_trip(start: str, destination: str) -> str:
 # ===========================================================================
 # Entry point
 # ===========================================================================
+
 
 def _in_container() -> bool:
     """Heuristik: läuft der Prozess in einem Container / Cloud-Runtime?
@@ -1712,9 +1706,7 @@ def build_transport_security(host: str, port: int):
     from mcp.server.transport_security import TransportSecuritySettings
 
     loopback = {f"127.0.0.1:{port}", f"localhost:{port}", f"[::1]:{port}"}
-    allowed = [
-        h.strip() for h in os.environ.get("MCP_ALLOWED_HOSTS", "").split(",") if h.strip()
-    ]
+    allowed = [h.strip() for h in os.environ.get("MCP_ALLOWED_HOSTS", "").split(",") if h.strip()]
     if allowed:
         # Loopback stays reachable for container health checks and debugging.
         hosts = set(allowed) | loopback
@@ -1727,11 +1719,7 @@ def build_transport_security(host: str, port: int):
     # rejects exactly the browser clients CORS permits. "*" is not expressible
     # (origins are compared literally) and is not copied across — relevant here
     # because ALLOWED_ORIGINS defaults to a wildcard.
-    origins = {
-        o.strip()
-        for o in os.environ.get("ALLOWED_ORIGINS", "").split(",")
-        if o.strip() and o.strip() != "*"
-    }
+    origins = {o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip() and o.strip() != "*"}
     origins |= {f"http://{h}" for h in hosts}
     return TransportSecuritySettings(
         enable_dns_rebinding_protection=True,

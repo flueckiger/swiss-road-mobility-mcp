@@ -46,6 +46,7 @@ _TRANSPORT_TIMEOUT = 20.0
 # Hilfsfunktionen: transport.opendata.ch
 # ---------------------------------------------------------------------------
 
+
 async def _find_nearest_station(latitude: float, longitude: float) -> dict | None:
     """
     Findet den nächsten ÖV-Haltepunkt zu gegebenen Koordinaten.
@@ -121,12 +122,14 @@ async def _find_stations_by_name(query: str, limit: int = 5) -> list[dict]:
     results = []
     for s in data.get("stations", []):
         coord = s.get("coordinate", {})
-        results.append({
-            "id": s.get("id", ""),
-            "name": s.get("name", ""),
-            "latitude": coord.get("y"),
-            "longitude": coord.get("x"),
-        })
+        results.append(
+            {
+                "id": s.get("id", ""),
+                "name": s.get("name", ""),
+                "latitude": coord.get("y"),
+                "longitude": coord.get("x"),
+            }
+        )
     return results
 
 
@@ -158,11 +161,10 @@ async def _get_connections(
         except httpx.HTTPStatusError as e:
             logger.warning(
                 "transport.opendata.ch HTTP %s: %s",
-                e.response.status_code, e.response.text[:200],
+                e.response.status_code,
+                e.response.text[:200],
             )
-            raise APIError(
-                f"transport.opendata.ch antwortete mit HTTP {e.response.status_code}."
-            )
+            raise APIError(f"transport.opendata.ch antwortete mit HTTP {e.response.status_code}.")
         except httpx.TimeoutException:
             raise APIError(f"Timeout bei ÖV-Abfrage ({from_station} → {to_destination}).")
         except httpx.ConnectError as e:
@@ -183,20 +185,24 @@ async def _get_connections(
             sec_walk = sec.get("walk")
 
             if sec_walk:
-                sections.append({
-                    "type": "walk",
-                    "duration_min": sec_walk.get("duration", 0) // 60,
-                })
+                sections.append(
+                    {
+                        "type": "walk",
+                        "duration_min": sec_walk.get("duration", 0) // 60,
+                    }
+                )
             elif sec_journey:
-                sections.append({
-                    "type": "transit",
-                    "line": sec_journey.get("name", ""),
-                    "category": sec_journey.get("category", ""),
-                    "departure": sec_from.get("departure", ""),
-                    "arrival": sec_to.get("arrival", ""),
-                    "from_station": sec_from.get("station", {}).get("name", ""),
-                    "to_station": sec_to.get("station", {}).get("name", ""),
-                })
+                sections.append(
+                    {
+                        "type": "transit",
+                        "line": sec_journey.get("name", ""),
+                        "category": sec_journey.get("category", ""),
+                        "departure": sec_from.get("departure", ""),
+                        "arrival": sec_to.get("arrival", ""),
+                        "from_station": sec_from.get("station", {}).get("name", ""),
+                        "to_station": sec_to.get("station", {}).get("name", ""),
+                    }
+                )
 
         # Bug #3 Fix: transport.opendata.ch gibt 'duration' als String
         # im Format 'HH:MM:SS' zurück, nicht als Integer (Sekunden).
@@ -216,13 +222,15 @@ async def _get_connections(
                 dur_seconds = 0
         duration_min = dur_seconds // 60
 
-        connections.append({
-            "departure": from_info.get("departure", ""),
-            "arrival": to_info.get("arrival", ""),
-            "duration_min": duration_min,
-            "transfers": conn.get("transfers", 0),
-            "sections": sections,
-        })
+        connections.append(
+            {
+                "departure": from_info.get("departure", ""),
+                "arrival": to_info.get("arrival", ""),
+                "duration_min": duration_min,
+                "transfers": conn.get("transfers", 0),
+                "sections": sections,
+            }
+        )
 
     return connections
 
@@ -230,6 +238,7 @@ async def _get_connections(
 # ---------------------------------------------------------------------------
 # Mobility Snapshot (aggregiert alle verfügbaren Quellen)
 # ---------------------------------------------------------------------------
+
 
 async def build_mobility_snapshot(
     latitude: float,
@@ -303,6 +312,7 @@ async def build_mobility_snapshot(
     # ── Optionale Phase-2-Daten ────────────────────────────────────────────
     if has_api_key and api_key:
         from . import traffic_situations
+
         try:
             results["traffic_situations"] = await traffic_situations.fetch_situations(
                 api_key=api_key,
@@ -337,7 +347,8 @@ async def build_mobility_snapshot(
         # Bug #4 Fix: park_rail kann None oder {"error": ...} sein, wenn
         # die SBB-API nicht erreichbar ist. Immer auf None prüfen, bevor
         # wir .get() aufrufen – sonst AttributeError «NoneType has no attribute get».
-        "park_rail": results.get("park_rail") or {
+        "park_rail": results.get("park_rail")
+        or {
             "found": 0,
             "facilities": [],
             "note": "Park+Rail-Daten nicht verfügbar (SBB-Endpunkt nicht erreichbar).",
@@ -356,6 +367,7 @@ async def build_mobility_snapshot(
 # ---------------------------------------------------------------------------
 # Multimodaler Reiseplan
 # ---------------------------------------------------------------------------
+
 
 async def plan_multimodal_trip(
     start_latitude: float,
@@ -442,70 +454,76 @@ async def plan_multimodal_trip(
             logger.warning(f"ÖV-Verbindung fehlgeschlagen: {e}")
 
     # ── Schritt 3: Empfohlene Park & Rail Anlage ───────────────────────────
-    facilities = (
-        park_rail_result.get("facilities", [])
-        if isinstance(park_rail_result, dict)
-        else []
-    )
+    facilities = park_rail_result.get("facilities", []) if isinstance(park_rail_result, dict) else []
     recommended_facility = facilities[0] if facilities else None
 
     # ── Schritt 4: Last-Mile-Optionen am Start ─────────────────────────────
     sharing_vehicles = []
     if isinstance(sharing_result, dict):
-        for item in (sharing_result.get("vehicles") or sharing_result.get("stations") or []):
+        for item in sharing_result.get("vehicles") or sharing_result.get("stations") or []:
             if isinstance(item, dict):
-                sharing_vehicles.append({
-                    "type": item.get("vehicle_type") or item.get("type", ""),
-                    "provider": item.get("provider_name") or item.get("provider", ""),
-                    "distance_m": item.get("distance_m"),
-                    "available": item.get("available"),
-                })
+                sharing_vehicles.append(
+                    {
+                        "type": item.get("vehicle_type") or item.get("type", ""),
+                        "provider": item.get("provider_name") or item.get("provider", ""),
+                        "distance_m": item.get("distance_m"),
+                        "available": item.get("available"),
+                    }
+                )
         sharing_vehicles = sharing_vehicles[:3]
 
     # ── Schritt 5: Reiseplan zusammenführen ───────────────────────────────
     plan_steps = []
 
     if sharing_vehicles:
-        plan_steps.append({
-            "step": 1,
-            "mode": "shared_vehicle",
-            "description": f"Sharing-Option zum Bahnhof: {sharing_vehicles[0].get('type', 'Fahrzeug')} ({sharing_vehicles[0].get('provider', '')})",
-            "options": sharing_vehicles,
-        })
+        plan_steps.append(
+            {
+                "step": 1,
+                "mode": "shared_vehicle",
+                "description": f"Sharing-Option zum Bahnhof: {sharing_vehicles[0].get('type', 'Fahrzeug')} ({sharing_vehicles[0].get('provider', '')})",
+                "options": sharing_vehicles,
+            }
+        )
 
     if recommended_facility:
-        plan_steps.append({
-            "step": len(plan_steps) + 1,
-            "mode": "park_and_rail",
-            "description": (
-                f"Parkieren bei: {recommended_facility.get('name', 'P+R Anlage')} "
-                f"({recommended_facility.get('total_spaces', '?')} Plätze, "
-                f"Tarif: {recommended_facility.get('tarif_category', 'unbekannt')})"
-            ),
-            "facility": recommended_facility,
-        })
+        plan_steps.append(
+            {
+                "step": len(plan_steps) + 1,
+                "mode": "park_and_rail",
+                "description": (
+                    f"Parkieren bei: {recommended_facility.get('name', 'P+R Anlage')} "
+                    f"({recommended_facility.get('total_spaces', '?')} Plätze, "
+                    f"Tarif: {recommended_facility.get('tarif_category', 'unbekannt')})"
+                ),
+                "facility": recommended_facility,
+            }
+        )
 
     if connection_from and connections:
         best_conn = connections[0]
-        plan_steps.append({
-            "step": len(plan_steps) + 1,
-            "mode": "public_transport",
-            "description": (
-                f"ÖV ab {connection_from}: "
-                f"Abfahrt {best_conn.get('departure', '?')}, "
-                f"Ankunft {best_conn.get('arrival', '?')}, "
-                f"Dauer {best_conn.get('duration_min', '?')} min, "
-                f"{best_conn.get('transfers', 0)} Umsteigen"
-            ),
-            "connections": connections,
-        })
+        plan_steps.append(
+            {
+                "step": len(plan_steps) + 1,
+                "mode": "public_transport",
+                "description": (
+                    f"ÖV ab {connection_from}: "
+                    f"Abfahrt {best_conn.get('departure', '?')}, "
+                    f"Ankunft {best_conn.get('arrival', '?')}, "
+                    f"Dauer {best_conn.get('duration_min', '?')} min, "
+                    f"{best_conn.get('transfers', 0)} Umsteigen"
+                ),
+                "connections": connections,
+            }
+        )
     elif not connections:
-        plan_steps.append({
-            "step": len(plan_steps) + 1,
-            "mode": "public_transport",
-            "description": f"Keine ÖV-Verbindung von '{connection_from}' nach '{destination}' gefunden.",
-            "hint": "Versuche einen anderen Zielort oder prüfe transport.opendata.ch direkt.",
-        })
+        plan_steps.append(
+            {
+                "step": len(plan_steps) + 1,
+                "mode": "public_transport",
+                "description": f"Keine ÖV-Verbindung von '{connection_from}' nach '{destination}' gefunden.",
+                "hint": "Versuche einen anderen Zielort oder prüfe transport.opendata.ch direkt.",
+            }
+        )
 
     return {
         "route": {

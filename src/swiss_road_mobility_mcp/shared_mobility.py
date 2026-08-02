@@ -26,8 +26,14 @@ BASE_URL = "https://api.sharedmobility.ch/v1/sharedmobility"
 
 # Bekannte Fahrzeugtypen im Schweizer Feed
 VEHICLE_TYPES = [
-    "Bicycle", "E-Bike", "E-Scooter", "E-Moped",
-    "Car", "E-Car", "Cargo-Bicycle", "Other",
+    "Bicycle",
+    "E-Bike",
+    "E-Scooter",
+    "E-Moped",
+    "Car",
+    "E-Car",
+    "Cargo-Bicycle",
+    "Other",
 ]
 
 # Pickup-Typen
@@ -174,10 +180,7 @@ async def find_nearby_vehicles(
         "count": len(vehicles),
         "by_type": type_counts,
         "vehicles": vehicles[:50],  # Max 50 Ergebnisse für Token-Effizienz
-        "hint": (
-            "Ergebnisse zeigen Echtzeit-Verfügbarkeit. "
-            "Nutze die App-Links zur direkten Buchung beim Anbieter."
-        ),
+        "hint": ("Ergebnisse zeigen Echtzeit-Verfügbarkeit. Nutze die App-Links zur direkten Buchung beim Anbieter."),
     }
 
 

@@ -31,9 +31,7 @@ class JsonFormatter(logging.Formatter):
     dropped.
     """
 
-    _RESERVED = frozenset(
-        vars(logging.makeLogRecord({})).keys()
-    ) | {"message", "asctime"}
+    _RESERVED = frozenset(vars(logging.makeLogRecord({})).keys()) | {"message", "asctime"}
 
     def format(self, record: logging.LogRecord) -> str:
         payload = {

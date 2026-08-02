@@ -40,6 +40,7 @@ DIETIKON = {"lat": 47.4036, "lon": 8.4003, "name": "Dietikon"}
 # Park & Rail Tests
 # ===========================================================================
 
+
 class TestParkRailModule:
     """Tests für das park_rail Modul (SBB Open Data)."""
 
@@ -157,6 +158,7 @@ class TestParkRailModule:
 # ===========================================================================
 # Multimodal Tests
 # ===========================================================================
+
 
 class TestMultimodalModule:
     """Tests für das multimodal Modul."""
@@ -337,6 +339,7 @@ class TestMultimodalModule:
 # MCP Tool Integration Tests (via Server)
 # ===========================================================================
 
+
 class TestPhase3Tools:
     """End-to-End Tests für die Phase-3-MCP-Tools."""
 
@@ -376,8 +379,14 @@ class TestPhase3Tools:
 
         # Alle erwarteten Schlüssel prüfen
         parsed = json.loads(json_str)
-        for key in ["snapshot_location", "nearest_station", "shared_mobility",
-                    "ev_charging", "park_rail", "data_sources"]:
+        for key in [
+            "snapshot_location",
+            "nearest_station",
+            "shared_mobility",
+            "ev_charging",
+            "park_rail",
+            "data_sources",
+        ]:
             assert key in parsed, f"Snapshot muss '{key}' enthalten"
 
 

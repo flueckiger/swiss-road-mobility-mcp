@@ -29,14 +29,16 @@ async def test_find_charger_tool_via_session():
     async with connect(server.mcp) as client:
         result = await client.call_tool(
             "road_find_charger",
-            {"params": {
-                "latitude": 47.3769,
-                "longitude": 8.5417,
-                "radius_km": 2.0,
-                "include_details": False,
-                "only_available": False,
-                "limit": 20,
-            }},
+            {
+                "params": {
+                    "latitude": 47.3769,
+                    "longitude": 8.5417,
+                    "radius_km": 2.0,
+                    "include_details": False,
+                    "only_available": False,
+                    "limit": 20,
+                }
+            },
         )
 
     assert result.is_error is False

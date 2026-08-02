@@ -33,6 +33,7 @@ def _reset_tracing():
 # Gating logic — off by default
 # ===========================================================================
 
+
 class TestGating:
     def test_off_by_default(self, monkeypatch):
         monkeypatch.delenv("MCP_TRACING_ENABLED", raising=False)
@@ -61,6 +62,7 @@ class TestGating:
 # instrument_asgi
 # ===========================================================================
 
+
 class TestInstrumentAsgi:
     def test_returns_app_unchanged_when_disabled(self):
         tracing._enabled = False
@@ -78,6 +80,7 @@ class TestInstrumentAsgi:
 # ===========================================================================
 # Real span creation — the core OBS-006 value: upstream calls are traced
 # ===========================================================================
+
 
 class TestHttpxTracing:
     @respx.mock

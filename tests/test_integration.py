@@ -38,6 +38,7 @@ pytestmark = pytest.mark.live
 # Fixtures
 # ===========================================================================
 
+
 @pytest_asyncio.fixture
 async def client():
     """Erstellt einen HTTP-Client für die Tests."""
@@ -61,6 +62,7 @@ BERN_LON = 7.4474
 # Haversine Tests
 # ===========================================================================
 
+
 class TestHaversine:
     """Teste die Distanzberechnung."""
 
@@ -83,6 +85,7 @@ class TestHaversine:
 # Shared Mobility Tests
 # ===========================================================================
 
+
 class TestSharedMobility:
     """Tests gegen die sharedmobility.ch API."""
 
@@ -90,8 +93,11 @@ class TestSharedMobility:
     async def test_find_nearby_zurich(self, client):
         """Finde Sharing-Angebote am Zürich HB."""
         result = await find_nearby_vehicles(
-            client, longitude=ZH_HB_LON, latitude=ZH_HB_LAT,
-            radius_meters=1000, only_available=False,
+            client,
+            longitude=ZH_HB_LON,
+            latitude=ZH_HB_LAT,
+            radius_meters=1000,
+            only_available=False,
         )
         assert "count" in result
         assert "vehicles" in result
@@ -103,8 +109,12 @@ class TestSharedMobility:
     async def test_find_nearby_with_filter(self, client):
         """Filtere nach E-Bike."""
         result = await find_nearby_vehicles(
-            client, longitude=ZH_HB_LON, latitude=ZH_HB_LAT,
-            radius_meters=2000, vehicle_type="E-Bike", only_available=False,
+            client,
+            longitude=ZH_HB_LON,
+            latitude=ZH_HB_LAT,
+            radius_meters=2000,
+            vehicle_type="E-Bike",
+            only_available=False,
         )
         assert "count" in result
         # Wenn Ergebnisse, dann nur E-Bikes
@@ -135,6 +145,7 @@ class TestSharedMobility:
 # EV Charging Tests
 # ===========================================================================
 
+
 class TestEVCharging:
     """Tests gegen die ich-tanke-strom.ch API."""
 
@@ -142,8 +153,11 @@ class TestEVCharging:
     async def test_find_nearby_zurich(self, client):
         """Finde Ladestationen am Zürich HB."""
         result = await find_nearby_chargers(
-            client, longitude=ZH_HB_LON, latitude=ZH_HB_LAT,
-            radius_km=2.0, include_details=False,
+            client,
+            longitude=ZH_HB_LON,
+            latitude=ZH_HB_LAT,
+            radius_km=2.0,
+            include_details=False,
         )
         assert "total_found" in result
         assert "stations" in result
@@ -153,8 +167,12 @@ class TestEVCharging:
     async def test_find_nearby_with_details(self, client):
         """Finde Ladestationen MIT Detaildaten."""
         result = await find_nearby_chargers(
-            client, longitude=ZH_HB_LON, latitude=ZH_HB_LAT,
-            radius_km=1.0, include_details=True, limit=5,
+            client,
+            longitude=ZH_HB_LON,
+            latitude=ZH_HB_LAT,
+            radius_km=1.0,
+            include_details=True,
+            limit=5,
         )
         assert "stations" in result
         if result["stations"]:
@@ -167,15 +185,18 @@ class TestEVCharging:
         """Gesamtstatistik aller Ladepunkte."""
         result = await get_charger_status(client)
         assert "total_charging_points" in result
-        assert result["total_charging_points"] > 1000, \
-            "Die Schweiz hat >1000 Ladepunkte"
+        assert result["total_charging_points"] > 1000, "Die Schweiz hat >1000 Ladepunkte"
 
     @pytest.mark.asyncio
     async def test_find_only_available(self, client):
         """Nur freie Stationen in Bern."""
         result = await find_nearby_chargers(
-            client, longitude=BERN_LON, latitude=BERN_LAT,
-            radius_km=5.0, only_available=True, include_details=False,
+            client,
+            longitude=BERN_LON,
+            latitude=BERN_LAT,
+            radius_km=5.0,
+            only_available=True,
+            include_details=False,
         )
         assert "stations" in result
         for station in result["stations"]:
