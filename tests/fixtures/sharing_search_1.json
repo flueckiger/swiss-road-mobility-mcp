@@ -1,97 +1,103 @@
 [
   {
     "geometry": {
-      "x": 8.252358,
-      "y": 47.0311,
+      "x": 7.580358,
+      "y": 47.56001,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "nextbike_ch",
-      "provider_name": "nextbike Switzerland",
-      "provider_phone": "0041415080800",
-      "provider_timezone": "Europe/Brussels",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id504288371",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=de.nextbike",
-      "id": "nextbike_ch:373982224",
+      "provider_id": "velospot",
+      "provider_name": "Velospot",
+      "provider_timezone": "Europe/Zurich",
+      "id": "velospot:480",
       "available": true,
       "pickup_type": "station_based",
-      "station_name": "Busschleife Obernau / Hubelstrasse ",
+      "station_name": "Bernoullistrasse 30 - Basel",
+      "station_address": "Bernoullistrasse 30",
+      "station_postcode": "4056",
       "station_status_installed": true,
       "station_status_renting": true,
       "station_status_returning": true,
-      "station_status_num_vehicle_available": 0,
-      "station_region_id": "nextbike_ch:491"
+      "station_status_num_vehicle_available": 1,
+      "station_region_id": "velospot:19",
+      "vehicle_type": [
+        "E-Bike",
+        "Bike",
+        "Bike"
+      ]
     },
-    "featureId": "nextbike_ch:373982224",
-    "id": "nextbike_ch:373982224",
+    "featureId": "velospot:480",
+    "id": "velospot:480",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   },
   {
     "geometry": {
-      "x": 7.390321,
-      "y": 46.94017,
+      "x": 7.58254,
+      "y": 47.559483,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "voiscooters.com",
-      "provider_name": "Voi Technology AB",
-      "provider_timezone": "CET",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
-      "id": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
+      "provider_id": "velospot",
+      "provider_name": "Velospot",
+      "provider_timezone": "Europe/Zurich",
+      "id": "velospot:635",
       "available": true,
       "pickup_type": "station_based",
-      "station_name": "Bernstrasse 100",
+      "station_name": "Bernouillistrasse 21 - Basel",
+      "station_address": "Petersplatz 11",
+      "station_postcode": "4056",
       "station_status_installed": true,
       "station_status_renting": true,
       "station_status_returning": true,
       "station_status_num_vehicle_available": 0,
-      "station_region_id": "voiscooters.com:null",
+      "station_region_id": "velospot:19",
       "vehicle_type": [
-        "E-Scooter",
-        "E-Bike"
+        "E-Bike",
+        "Bike",
+        "Bike"
       ]
     },
-    "featureId": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
-    "id": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
+    "featureId": "velospot:635",
+    "id": "velospot:635",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   },
   {
     "geometry": {
-      "x": 7.448403,
-      "y": 46.94205,
+      "x": 8.546459,
+      "y": 47.40382,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "voiscooters.com",
-      "provider_name": "Voi Technology AB",
-      "provider_timezone": "CET",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
-      "id": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
+      "provider_id": "velospot",
+      "provider_name": "Velospot",
+      "provider_timezone": "Europe/Zurich",
+      "id": "velospot:1225",
       "available": true,
       "pickup_type": "station_based",
-      "station_name": "Bernastrasse 12b",
+      "station_name": "Berninaplatz - Zürich",
+      "station_address": "Berninaplatz ",
+      "station_postcode": "8057",
       "station_status_installed": true,
       "station_status_renting": true,
       "station_status_returning": true,
-      "station_status_num_vehicle_available": 0,
-      "station_region_id": "voiscooters.com:null",
+      "station_status_num_vehicle_available": 1,
+      "station_region_id": "velospot:36",
       "vehicle_type": [
-        "E-Scooter",
-        "E-Bike"
+        "E-Bike",
+        "Bike",
+        "Bike"
       ]
     },
-    "featureId": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
-    "id": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
+    "featureId": "velospot:1225",
+    "id": "velospot:1225",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   }

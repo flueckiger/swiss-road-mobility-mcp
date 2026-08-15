@@ -1,85 +1,87 @@
 [
   {
     "geometry": {
-      "x": 7.440794,
-      "y": 46.949455,
+      "x": 7.436005,
+      "y": 46.950966,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "voiscooters.com",
-      "provider_name": "Voi Technology AB",
-      "provider_timezone": "CET",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
-      "id": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
+      "provider_id": "2em_cars",
+      "provider_name": "2EM Car Sharing",
+      "provider_phone": "0041 58 255 28 66",
+      "provider_timezone": "Europe/Zurich",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/fr/app/2em-car-sharing/id1517096697",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=ch.app2em",
+      "id": "2em_cars:7927",
       "available": true,
-      "pickup_type": "free_floating",
+      "pickup_type": "station_based",
+      "station_name": "Toyota Auris HDS 2016",
+      "station_address": "Falkenpl., 3012 Bern, Suisse",
+      "station_status_installed": true,
+      "station_status_renting": true,
+      "station_status_returning": true,
+      "station_status_num_vehicle_available": 1,
+      "station_region_id": "2em_cars:null",
       "vehicle_type": [
-        "E-Scooter"
-      ],
-      "vehicle_status_disabled": false,
-      "vehicle_status_reserved": false
+        "Car"
+      ]
     },
-    "featureId": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
-    "id": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
+    "featureId": "2em_cars:7927",
+    "id": "2em_cars:7927",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   },
   {
     "geometry": {
-      "x": 7.439503,
-      "y": 46.94567,
+      "x": 7.440534,
+      "y": 46.94835,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "voiscooters.com",
-      "provider_name": "Voi Technology AB",
-      "provider_timezone": "CET",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
-      "id": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
+      "provider_id": "velospot",
+      "provider_name": "Velospot",
+      "provider_timezone": "Europe/Zurich",
+      "id": "velospot:002303e",
       "available": true,
       "pickup_type": "free_floating",
       "vehicle_type": [
-        "E-Scooter"
+        "Bike"
       ],
       "vehicle_status_disabled": false,
       "vehicle_status_reserved": false
     },
-    "featureId": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
-    "id": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
+    "featureId": "velospot:002303e",
+    "id": "velospot:002303e",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   },
   {
     "geometry": {
-      "x": 7.443636,
-      "y": 46.945057,
+      "x": 7.440534,
+      "y": 46.94835,
       "spatialReference": {
         "wkid": 4326
       }
     },
     "attributes": {
-      "provider_id": "voiscooters.com",
-      "provider_name": "Voi Technology AB",
-      "provider_timezone": "CET",
-      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
-      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
-      "id": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
-      "available": false,
+      "provider_id": "velospot",
+      "provider_name": "Velospot",
+      "provider_timezone": "Europe/Zurich",
+      "id": "velospot:003007e",
+      "available": true,
       "pickup_type": "free_floating",
       "vehicle_type": [
-        "E-Scooter"
+        "Bike"
       ],
-      "vehicle_status_disabled": true,
+      "vehicle_status_disabled": false,
       "vehicle_status_reserved": false
     },
-    "featureId": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
-    "id": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
+    "featureId": "velospot:003007e",
+    "id": "velospot:003007e",
     "layerBodId": "ch.bfe.sharedmobility",
     "layerName": "Shared Mobility Angebote"
   }

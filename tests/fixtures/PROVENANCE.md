@@ -35,7 +35,7 @@ Sie lassen sich nicht auf Zuruf aufzeichnen und sind als Erfindung in Ordnung.
 
 - **Werkzeuge:** `road_find_charger`, `road_mobility_snapshot`
 - **Schluessel:** `https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/data/ch.bfe.ladestellen-elektromobilitaet_de.json`
-- **Auswahl:** ungekuerzt
+- **Auswahl:** 9 von 8853 Listeneintraegen (je Liste die ersten 3), aus 24345814 Bytes Rohantwort
 - **Groesse:** 15323 Bytes
 - **SHA-256:** `1e30cb454fcccb2ab943f11e3ae71e3bf1658914aa63ccba68b8416ae211cd3c`
 
@@ -43,15 +43,15 @@ Sie lassen sich nicht auf Zuruf aufzeichnen und sind als Erfindung in Ordnung.
 
 - **Werkzeuge:** `road_find_charger`, `road_mobility_snapshot`
 - **Schluessel:** `https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/status/ch.bfe.ladestellen-elektromobilitaet.json`
-- **Auswahl:** ungekuerzt
-- **Groesse:** 1260 Bytes
-- **SHA-256:** `95af1d17fa0e1a356af78584e36c796b6fdda2a268c2412674ded02ac66efbc6`
+- **Auswahl:** 12 von 9251 Listeneintraegen (je Liste die ersten 3), aus 1204522 Bytes Rohantwort
+- **Groesse:** 1258 Bytes
+- **SHA-256:** `2954be484b09788088a3cb7c60594e27ab281a56373fcc9259cc01ecaedf1677`
 
 ## `charger_3.json`
 
 - **Werkzeuge:** `road_find_charger`
 - **Schluessel:** `https://data.geo.admin.ch/ch.bfe.ladestellen-elektromobilitaet/data/ch.bfe.ladestellen-elektromobilitaet.json`
-- **Auswahl:** ungekuerzt
+- **Auswahl:** 95 von 9340 Listeneintraegen (je Liste die ersten 3), aus 26081676 Bytes Rohantwort
 - **Groesse:** 20736 Bytes
 - **SHA-256:** `ee884f095a611f6f8642cde3b2237b0575448338e9e2d07cfde15cbb0be33df8`
 
@@ -59,7 +59,7 @@ Sie lassen sich nicht auf Zuruf aufzeichnen und sind als Erfindung in Ordnung.
 
 - **Werkzeuge:** `road_classify_road`
 - **Schluessel:** `https://api3.geo.admin.ch/rest/services/ech/MapServer/identify?geometry=7.4396%2C46.949&geometryFormat=geojson&geometryType=esriGeometryPoint&imageDisplay=1000%2C1000%2C96&mapExtent=7.429600000000001%2C46.939%2C7.4496%2C46.958999999999996&tolerance=50&layers=all%3Ach.swisstopo.swisstlm3d-strassen&sr=4326&lang=de&returnGeometry=false`
-- **Auswahl:** ungekuerzt
+- **Auswahl:** 3 von 22 Listeneintraegen (je Liste die ersten 3), aus 6815 Bytes Rohantwort
 - **Groesse:** 1295 Bytes
 - **SHA-256:** `a2ddb57cdc687e02f05b5eb876e9e4f36503c00132bc12a057da7135c0e669be`
 
@@ -83,9 +83,9 @@ Sie lassen sich nicht auf Zuruf aufzeichnen und sind als Erfindung in Ordnung.
 
 - **Werkzeuge:** `road_find_sharing`, `road_mobility_snapshot`
 - **Schluessel:** `https://api.sharedmobility.ch/v1/sharedmobility/identify?Geometry=7.4396%2C46.949&Tolerance=500&offset=0&geometryFormat=esrijson`
-- **Auswahl:** ungekuerzt
-- **Groesse:** 2909 Bytes
-- **SHA-256:** `1a7711657a843d7bc386ae7340b59e9d72d1662d2a3ff057ebb0296008093ec1`
+- **Auswahl:** 6 von 53 Listeneintraegen (je Liste die ersten 3), aus 30735 Bytes Rohantwort
+- **Groesse:** 2424 Bytes
+- **SHA-256:** `a0048bebdc7be32a19b8c8a2853d47e0aed79ef28a2fcc5099b8fe4cf16b5422`
 
 ## `sharing_providers_1.json`
 
@@ -93,20 +93,20 @@ Sie lassen sich nicht auf Zuruf aufzeichnen und sind als Erfindung in Ordnung.
 - **Schluessel:** `https://api.sharedmobility.ch/v1/sharedmobility/providers`
 - **Auswahl:** ungekuerzt — der Server liest diese Liste ganz, ein Schnitt behauptete einen kleineren Bestand
 - **Groesse:** 25133 Bytes
-- **SHA-256:** `ccc50714eda45f44fc4af7c28d6c484aad8498370941222ec8fe07c4c3445af8`
+- **SHA-256:** `23f6a63a78f956b953966a60c8af785068dc47b65dce1b86b5721f35ef5f3a16`
 
 ## `sharing_search_1.json`
 
 - **Werkzeuge:** `road_search_sharing`
 - **Schluessel:** `https://api.sharedmobility.ch/v1/sharedmobility/find?searchText=Bern&searchField=ch.bfe.sharedmobility.station.name&offset=0&geometryFormat=esrijson`
-- **Auswahl:** ungekuerzt
-- **Groesse:** 3381 Bytes
-- **SHA-256:** `9f3a2f2e8fbe01ae3155e3ab8f7a57a562c1484731a859e45852ad89e7704b13`
+- **Auswahl:** 12 von 59 Listeneintraegen (je Liste die ersten 3), aus 41357 Bytes Rohantwort
+- **Groesse:** 2793 Bytes
+- **SHA-256:** `1999482094b37214b0bf4ecb2c8884ca2c24a98f5638e21c5622a78a3fe64142`
 
 ## `snapshot_1.json`
 
 - **Werkzeuge:** `road_mobility_snapshot`
 - **Schluessel:** `https://transport.opendata.ch/v1/locations?x=7.4396&y=46.949&type=station`
-- **Auswahl:** ungekuerzt
+- **Auswahl:** 3 von 10 Listeneintraegen (je Liste die ersten 3), aus 1443 Bytes Rohantwort
 - **Groesse:** 733 Bytes
 - **SHA-256:** `5e876e816b6e4cd7ca844e359598c882a7c92b411249246bb70c1743b62e295d`
