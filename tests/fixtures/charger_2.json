@@ -44,11 +44,11 @@
         },
         {
           "EvseID": "CHFASE4150402",
-          "EVSEStatus": "Available"
+          "EVSEStatus": "Occupied"
         },
         {
           "EvseID": "CHFASE4150403",
-          "EVSEStatus": "Available"
+          "EVSEStatus": "Occupied"
         }
       ],
       "OperatorID": "CH*FASTNED",

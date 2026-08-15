@@ -157,6 +157,28 @@ def test_der_recorder_faehrt_dieselben_aufrufe():
     assert im_plan == set(WERKZEUGE), "Recorder und Testtabelle nennen verschiedene Aufrufe"
 
 
+def test_der_nachweis_meldet_was_gekuerzt_wurde():
+    """Ein Nachweis, der ueber jeder Datei «ungekuerzt» schreibt, belegt nichts.
+
+    Genau das tat er: `_kuerze` gab seine Zaehler als `return vorher, nachher,
+    geh(daten)` zurueck, und Python liest die beiden Zahlen, *bevor* `geh` sie
+    hochzaehlt — also immer (0, 0). Sieben der zehn Aufzeichnungen standen damit
+    als vollstaendig im Ordner; die groesste stammt aus 26 MB Rohantwort und
+    traegt davon 95 Eintraege.
+
+    Diese Zusicherung faellt, wenn die Zaehler wieder blind werden.
+    """
+    modul = recorder()
+    vorher, nachher, gekuerzt = modul._kuerze({"a": list(range(modul.ZEILEN * 3))})
+    assert (vorher, nachher) == (modul.ZEILEN * 3, modul.ZEILEN), (
+        f"_kuerze meldet {vorher}→{nachher} statt {modul.ZEILEN * 3}→{modul.ZEILEN}"
+    )
+    assert len(gekuerzt["a"]) == modul.ZEILEN
+    assert re.search(r"- \*\*Auswahl:\*\* \d+ von \d+ Listeneintraegen", provenance()), (
+        "keine einzige Datei im Nachweis ist als gekuerzt ausgewiesen"
+    )
+
+
 @pytest.mark.parametrize("name", sorted(recorded_names()))
 def test_keine_aufzeichnung_ist_leer(name):
     """Eine leere Antwort sieht aus wie eine gueltige und prueft nichts."""
