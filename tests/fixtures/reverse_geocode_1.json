@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "layerBodId": "ch.swisstopo.amtliches-gebaeudeadressverzeichnis",
+      "layerName": "Amtliches Gebäudeadressverzeichnis",
+      "featureId": 101443786,
+      "id": 101443786,
+      "properties": {
+        "adr_egaid": 101443786,
+        "bdg_egid": 2241912,
+        "adr_edid": 2,
+        "str_esid": 10107624,
+        "stn_label": "Bahnhofplatz",
+        "adr_number": "10b",
+        "zip_label": "3011 Bern",
+        "com_fosnr": 351,
+        "com_name": "Bern",
+        "adr_status": "1",
+        "adr_official": true,
+        "bdg_category": "non_residential",
+        "adr_modified": "20241115",
+        "label": 101443786
+      }
+    },
+    {
+      "layerBodId": "ch.swisstopo.amtliches-gebaeudeadressverzeichnis",
+      "layerName": "Amtliches Gebäudeadressverzeichnis",
+      "featureId": 101024109,
+      "id": 101024109,
+      "properties": {
+        "adr_egaid": 101024109,
+        "bdg_egid": 2241912,
+        "adr_edid": 0,
+        "str_esid": 10107624,
+        "stn_label": "Bahnhofplatz",
+        "adr_number": "10",
+        "zip_label": "3011 Bern",
+        "com_fosnr": 351,
+        "com_name": "Bern",
+        "adr_status": "1",
+        "adr_official": true,
+        "bdg_category": "non_residential",
+        "adr_modified": "20260618",
+        "label": 101024109
+      }
+    },
+    {
+      "layerBodId": "ch.swisstopo.amtliches-gebaeudeadressverzeichnis",
+      "layerName": "Amtliches Gebäudeadressverzeichnis",
+      "featureId": 101483763,
+      "id": 101483763,
+      "properties": {
+        "adr_egaid": 101483763,
+        "bdg_egid": 1230771,
+        "adr_edid": 1,
+        "str_esid": 10107624,
+        "stn_label": "Bahnhofplatz",
+        "adr_number": "6",
+        "zip_label": "3011 Bern",
+        "com_fosnr": 351,
+        "com_name": "Bern",
+        "adr_status": "1",
+        "adr_official": true,
+        "bdg_category": "partly_residential",
+        "adr_modified": "20241115",
+        "label": 101483763
+      }
+    }
+  ]
+}

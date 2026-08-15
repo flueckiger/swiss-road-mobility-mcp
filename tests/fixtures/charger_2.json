@@ -1,0 +1,58 @@
+{
+  "EVSEStatuses": [
+    {
+      "EVSEStatusRecord": [
+        {
+          "EvseID": "CH*CCI*E22078",
+          "EVSEStatus": "Unknown"
+        },
+        {
+          "EvseID": "CH*CCI*E22076",
+          "EVSEStatus": "Unknown"
+        },
+        {
+          "EvseID": "CH*CCI*E22079",
+          "EVSEStatus": "Unknown"
+        }
+      ],
+      "OperatorID": "CH*CCC",
+      "OperatorName": "Move"
+    },
+    {
+      "EVSEStatusRecord": [
+        {
+          "EvseID": "CH*ECUEGHPTGPB839WG4J9C5Q3YLV5783",
+          "EVSEStatus": "Available"
+        },
+        {
+          "EvseID": "CH*ECUEFCSWWWG9BSDPXWT337E9TUUPZS",
+          "EVSEStatus": "Available"
+        },
+        {
+          "EvseID": "CH*ECUEALVZL89BFEPYQ8GS54HMYV5JVX",
+          "EVSEStatus": "Available"
+        }
+      ],
+      "OperatorID": "CH*ECU",
+      "OperatorName": "eCarUp"
+    },
+    {
+      "EVSEStatusRecord": [
+        {
+          "EvseID": "CHFASE4150401",
+          "EVSEStatus": "Available"
+        },
+        {
+          "EvseID": "CHFASE4150402",
+          "EVSEStatus": "Available"
+        },
+        {
+          "EvseID": "CHFASE4150403",
+          "EVSEStatus": "Available"
+        }
+      ],
+      "OperatorID": "CH*FASTNED",
+      "OperatorName": "Fastned"
+    }
+  ]
+}
