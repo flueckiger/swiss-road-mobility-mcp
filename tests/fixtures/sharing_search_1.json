@@ -1,0 +1,98 @@
+[
+  {
+    "geometry": {
+      "x": 8.252358,
+      "y": 47.0311,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "nextbike_ch",
+      "provider_name": "nextbike Switzerland",
+      "provider_phone": "0041415080800",
+      "provider_timezone": "Europe/Brussels",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id504288371",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=de.nextbike",
+      "id": "nextbike_ch:373982224",
+      "available": true,
+      "pickup_type": "station_based",
+      "station_name": "Busschleife Obernau / Hubelstrasse ",
+      "station_status_installed": true,
+      "station_status_renting": true,
+      "station_status_returning": true,
+      "station_status_num_vehicle_available": 0,
+      "station_region_id": "nextbike_ch:491"
+    },
+    "featureId": "nextbike_ch:373982224",
+    "id": "nextbike_ch:373982224",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  },
+  {
+    "geometry": {
+      "x": 7.390321,
+      "y": 46.94017,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "voiscooters.com",
+      "provider_name": "Voi Technology AB",
+      "provider_timezone": "CET",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
+      "id": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
+      "available": true,
+      "pickup_type": "station_based",
+      "station_name": "Bernstrasse 100",
+      "station_status_installed": true,
+      "station_status_renting": true,
+      "station_status_returning": true,
+      "station_status_num_vehicle_available": 0,
+      "station_region_id": "voiscooters.com:null",
+      "vehicle_type": [
+        "E-Scooter",
+        "E-Bike"
+      ]
+    },
+    "featureId": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
+    "id": "voiscooters.com:02ee91c8-3c06-43b4-b52d-8b00e6c0aa8f",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  },
+  {
+    "geometry": {
+      "x": 7.448403,
+      "y": 46.94205,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "voiscooters.com",
+      "provider_name": "Voi Technology AB",
+      "provider_timezone": "CET",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
+      "id": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
+      "available": true,
+      "pickup_type": "station_based",
+      "station_name": "Bernastrasse 12b",
+      "station_status_installed": true,
+      "station_status_renting": true,
+      "station_status_returning": true,
+      "station_status_num_vehicle_available": 0,
+      "station_region_id": "voiscooters.com:null",
+      "vehicle_type": [
+        "E-Scooter",
+        "E-Bike"
+      ]
+    },
+    "featureId": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
+    "id": "voiscooters.com:5f12b49d-a24f-4102-a1eb-8fefc86d2f82",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  }
+]

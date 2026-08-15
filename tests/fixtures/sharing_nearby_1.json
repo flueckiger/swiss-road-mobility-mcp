@@ -1,0 +1,86 @@
+[
+  {
+    "geometry": {
+      "x": 7.440794,
+      "y": 46.949455,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "voiscooters.com",
+      "provider_name": "Voi Technology AB",
+      "provider_timezone": "CET",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
+      "id": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
+      "available": true,
+      "pickup_type": "free_floating",
+      "vehicle_type": [
+        "E-Scooter"
+      ],
+      "vehicle_status_disabled": false,
+      "vehicle_status_reserved": false
+    },
+    "featureId": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
+    "id": "voiscooters.com:38518b7a-9649-4c9b-a2f0-ced75e350757",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  },
+  {
+    "geometry": {
+      "x": 7.439503,
+      "y": 46.94567,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "voiscooters.com",
+      "provider_name": "Voi Technology AB",
+      "provider_timezone": "CET",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
+      "id": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
+      "available": true,
+      "pickup_type": "free_floating",
+      "vehicle_type": [
+        "E-Scooter"
+      ],
+      "vehicle_status_disabled": false,
+      "vehicle_status_reserved": false
+    },
+    "featureId": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
+    "id": "voiscooters.com:c8146e96-f1bb-47ec-87fa-bcfca4b7ac21",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  },
+  {
+    "geometry": {
+      "x": 7.443636,
+      "y": 46.945057,
+      "spatialReference": {
+        "wkid": 4326
+      }
+    },
+    "attributes": {
+      "provider_id": "voiscooters.com",
+      "provider_name": "Voi Technology AB",
+      "provider_timezone": "CET",
+      "provider_apps_ios_store_uri": "https://apps.apple.com/app/id1395921017?mt=8",
+      "provider_apps_android_store_uri": "https://play.google.com/store/apps/details?id=io.voiapp.voi&hl=en&gl=US",
+      "id": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
+      "available": false,
+      "pickup_type": "free_floating",
+      "vehicle_type": [
+        "E-Scooter"
+      ],
+      "vehicle_status_disabled": true,
+      "vehicle_status_reserved": false
+    },
+    "featureId": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
+    "id": "voiscooters.com:c03928be-8908-4f6e-8e29-5ee5e23e5fde",
+    "layerBodId": "ch.bfe.sharedmobility",
+    "layerName": "Shared Mobility Angebote"
+  }
+]

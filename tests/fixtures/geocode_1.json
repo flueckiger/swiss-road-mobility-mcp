@@ -1,0 +1,36 @@
+{
+  "results": [
+    {
+      "attrs": {
+        "detail": "bundesplatz 3 3011 bern 351 bern ch be",
+        "featureId": "2242547_0",
+        "geom_quadindex": "021300202201312213122",
+        "geom_st_box2d": "BOX(7.444191 46.946774,7.444191 46.946774)",
+        "label": "Bundesplatz 3 <b>3011 Bern</b>",
+        "lat": 46.946773529052734,
+        "links": [
+          {
+            "href": "/rest/services/ech/MapServer/ch.swisstopo.amtliches-gebaeudeadressverzeichnis/101002312",
+            "rel": "related",
+            "title": "ch.swisstopo.amtliches-gebaeudeadressverzeichnis"
+          },
+          {
+            "href": "/rest/services/ech/MapServer/ch.bfs.gebaeude_wohnungs_register/2242547_0",
+            "rel": "related",
+            "title": "ch.bfs.gebaeude_wohnungs_register"
+          }
+        ],
+        "lon": 7.444191932678223,
+        "num": 3,
+        "objectclass": "",
+        "origin": "address",
+        "rank": 7,
+        "x": 7.444191932678223,
+        "y": 46.946773529052734,
+        "zoomlevel": 10
+      },
+      "id": 1008653,
+      "weight": 9
+    }
+  ]
+}

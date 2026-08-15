@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "layerBodId": "ch.swisstopo.swisstlm3d-strassen",
+      "layerName": "Strassen und Wege swissTLM3D",
+      "featureId": 47950415,
+      "id": 47950415,
+      "properties": {
+        "strassenname": "Bahnhofplatz",
+        "objektart": 4,
+        "belagsart": 999998,
+        "verkehrsbedeutung": 999998,
+        "eigentuemer": 999997,
+        "verkehrsbeschraenkung": 999998,
+        "label": 4
+      }
+    },
+    {
+      "layerBodId": "ch.swisstopo.swisstlm3d-strassen",
+      "layerName": "Strassen und Wege swissTLM3D",
+      "featureId": 48848843,
+      "id": 48848843,
+      "properties": {
+        "strassenname": "Schweizerhofpassage",
+        "objektart": 20,
+        "belagsart": 100,
+        "verkehrsbedeutung": 999998,
+        "eigentuemer": 999997,
+        "verkehrsbeschraenkung": 100,
+        "label": 20
+      }
+    },
+    {
+      "layerBodId": "ch.swisstopo.swisstlm3d-strassen",
+      "layerName": "Strassen und Wege swissTLM3D",
+      "featureId": 48848845,
+      "id": 48848845,
+      "properties": {
+        "strassenname": "Schweizerhofpassage",
+        "objektart": 11,
+        "belagsart": 100,
+        "verkehrsbedeutung": 999998,
+        "eigentuemer": 999997,
+        "verkehrsbeschraenkung": 1900,
+        "label": 11
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "stations": [
+    {
+      "id": null,
+      "name": "Neuengassunterführung 2, Bern",
+      "score": null,
+      "coordinate": {
+        "type": "WGS84",
+        "x": null,
+        "y": null
+      },
+      "distance": 3.587079919296057,
+      "icon": null
+    },
+    {
+      "id": "8507000",
+      "name": "Bern",
+      "score": null,
+      "coordinate": {
+        "type": "WGS84",
+        "x": 46.948823,
+        "y": 7.439123
+      },
+      "distance": 0,
+      "icon": "train"
+    },
+    {
+      "id": "8507785",
+      "name": "Bern, Hauptbahnhof",
+      "score": null,
+      "coordinate": {
+        "type": "WGS84",
+        "x": 46.948994,
+        "y": 7.438519
+      },
+      "distance": 83,
+      "icon": "bus"
+    }
+  ]
+}

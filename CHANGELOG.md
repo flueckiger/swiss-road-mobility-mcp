@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Hinzugefügt / Added
+
+- **Aufgezeichnete Fixtures** in `tests/fixtures/` — zehn echte Antworten, eine
+  je Abfrageform (acht Hosts, aber mehr Abfrageformen als Hosts). Herkunft,
+  Datum, Auswahlregel und SHA-256 je Datei in `tests/fixtures/PROVENANCE.md`,
+  neu aufzeichnen mit `scripts/record_fixtures.py`, geladen über
+  `tests/fixture_data.py`. Portfolio-Konvention, gleich wie in `meteoswiss-mcp`
+  und `swiss-statistics-mcp`.
+
+  Zugeordnet wird beim Abspielen nach der **Anfrage** und nicht nach der
+  Reihenfolge: `road_mobility_snapshot` fragt mehrere Quellen in einem Aufruf
+  ab. Die Anbieterliste bleibt ungekürzt — das Werkzeug listet den Markt,
+  gekürzt log es.
+
+  **Zwei Nahtstellen, nicht eine.** Die Sharing- und Ladewerkzeuge nehmen den
+  gepoolten `MobilityHTTPClient`; `geo_admin`, `multimodal` und die
+  Verkehrsmodule bauen sich ihren eigenen Client über `egress.async_client()`.
+  Wer beim Aufzeichnen nur `build_client` abfängt, bekommt für die zweite
+  Hälfte «hat keine Anfrage abgeschickt» statt einer Aufzeichnung — genau so
+  ist es beim ersten Lauf passiert. Der Recorder fängt jetzt beide ab, und
+  `test_die_geokodierung_geht_an_die_andere_nahtstelle` hält das fest.
+
+### Bekannt / Known
+
+- **Zwei Werkzeuge haben keine Aufzeichnung, und beide Gründe stehen im
+  Nachweis.** `road_traffic_situations` verlangt `OPENTRANSPORTDATA_API_KEY`.
+  Und `data.opentransportdata.swiss` — die Quelle von `road_park_rail` —
+  antwortet diesem Anschluss auf **jede** Anfrage mit einem nginx-403, auch auf
+  `/api/3/action/site_read`. Das ist eine Sperre gegen Rechenzentrums-IPs und
+  **kein Befund über das Werkzeug**; ohne Verifikation von einem normalen
+  Anschluss aus wird darauf nichts gebaut, weder eine Fixture noch eine
+  Behauptung. `test_die_luecken_stehen_im_nachweis` sorgt dafür, dass die Lücke
+  sichtbar bleibt statt zu verschwinden.
+
+
 ## [0.5.4] - 2026-07-31
 
 ### Fixed
