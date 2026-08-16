@@ -11,6 +11,7 @@ Beide APIs (sharedmobility.ch und ich-tanke-strom.ch) sind:
 ✅ Rate Limits trotzdem respektieren – wir sind gute Gäste.
 """
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -25,6 +26,21 @@ from . import USER_AGENT
 from .egress import async_client
 
 logger = logging.getLogger("swiss-road-mobility-mcp")
+
+# Wie lange am Tuersteher gewartet wird, bevor abgesagt wird. Darueber ist
+# Warten ein Warten fuer niemanden: der Anrufer hat sein eigenes Timeout, und
+# eine Antwort nach seiner Frist kostet die Quelle eine Anfrage und bringt
+# nichts. Stand vorher als nackte 10 in der Bedingung — ein Test darueber
+# haette die Zahl ein zweites Mal hinschreiben muessen und damit sich selbst
+# zugestimmt.
+MAX_RATE_LIMIT_WAIT = 10.0
+
+# Das Warten unter einem Namen dieses Moduls. Ein Test, der stattdessen
+# `api_infrastructure.asyncio.sleep` uebernimmt, greift ins stdlib-Modul —
+# `.asyncio` *ist* `asyncio` — und ersetzt die Funktion im ganzen Prozess statt
+# nur hier. Ohne diesen Namen liess sich das Tor unten gar nicht pruefen, ausser
+# durch echtes Warten; es war denn auch ungeprueft, beide Zweige.
+_sleep = asyncio.sleep
 
 
 # =============================================================================
@@ -189,11 +205,9 @@ class MobilityHTTPClient:
             limiter = self._rate_limiters[limiter_name]
             if not limiter.can_proceed():
                 wait = limiter.wait_time()
-                if wait > 10:
+                if wait > MAX_RATE_LIMIT_WAIT:
                     raise APIError(f"Rate Limit für '{limiter_name}' erreicht. Nächste Abfrage in {wait:.0f}s möglich.")
-                import asyncio
-
-                await asyncio.sleep(wait)
+                await _sleep(wait)
             limiter.record()
 
         # 3. Request
