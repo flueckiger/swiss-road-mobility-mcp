@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Behoben / Fixed
 
+- **Das Rate-Limit-Tor war ungeprüft — beide Zweige.** `test_unit.py` prüfte
+  den `RateLimiter` als Objekt (`can_proceed()`, `wait_time()`), nie aber, was
+  `MobilityHTTPClient.get_json` damit macht. Eine Coverage-Messung wies die
+  Zeilen der Entscheidung «warten oder absagen» als nicht durchlaufen aus:
+  weder das Warten unter der Grenze noch die Absage darüber.
+
+  Schreibbar waren die Tests vorher auch nicht. Das Warten lag als
+  `import asyncio; await asyncio.sleep(wait)` direkt in der Funktion — ohne
+  Namen, den ein Test übernehmen kann. Wer es doch versuchte, hätte
+  `api_infrastructure.asyncio.sleep` gesetzt und damit `asyncio.sleep` im
+  ganzen Prozess ersetzt (`.asyncio` **ist** das stdlib-Modul), oder er hätte
+  bis zu zehn Sekunden echt gewartet. Das Warten heisst jetzt `_sleep` — die
+  Portfolio-Konvention aus `CLAUDE.md` Teil 1 —, und der Import steht oben
+  statt in der Schleife.
+
+  Die Grenze heisst jetzt `MAX_RATE_LIMIT_WAIT` statt einer nackten `10` in der
+  Bedingung: ein Test darüber hätte die Zahl sonst ein zweites Mal hinschreiben
+  müssen und damit sich selbst zugestimmt.
+
+  Drei neue Tests. Der über die Absage prüft, dass sie **vor** dem Warten
+  fällt — erst warten und dann absagen wäre das Schlechteste aus beidem, und
+  eine Prüfung, die nur `APIError` erwartet, kann die Reihenfolge nicht sehen.
+  Deckung von `api_infrastructure.py`: 87 % → 91 %.
+
 - **Der Fixture-Nachweis wies jede gekürzte Aufzeichnung als vollständig aus.**
   `_kuerze` gab seine Zähler als `return vorher, nachher, geh(daten)` zurück.
   Python wertet von links nach rechts aus und liest die beiden Zahlen, **bevor**

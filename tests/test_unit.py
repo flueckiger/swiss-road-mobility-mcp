@@ -17,7 +17,7 @@ Coverage per layer:
 import pytest
 import respx
 
-from swiss_road_mobility_mcp import ev_charging, geo_admin, shared_mobility
+from swiss_road_mobility_mcp import api_infrastructure, ev_charging, geo_admin, shared_mobility
 from swiss_road_mobility_mcp.api_infrastructure import (
     APIError,
     MobilityHTTPClient,
@@ -248,3 +248,102 @@ class TestGeoAdmin:
         result = await geo_admin.geocode_address("Nonexistent Place 9999")
         assert result["found"] == 0
         assert result["results"] == []
+
+
+# ===========================================================================
+# Das Rate-Limit-Tor
+#
+# Bis hierher pruefte `test_rate_limiter_blocks_after_max` den Tuersteher als
+# Objekt — `can_proceed()` und `wait_time()` —, nie aber, was der Client damit
+# macht. Eine Messung zeigte die Zeilen des Tors in `get_json` als ungedeckt:
+# **beide** Zweige der Entscheidung «warten oder absagen». Schreibbar waren sie
+# vorher auch nicht, ausser durch echtes Warten: das Warten hatte keinen Namen,
+# den ein Test uebernehmen kann, sondern lag direkt auf `asyncio.sleep`.
+# ===========================================================================
+
+
+class TestRateLimitTor:
+    # Ein allow-gelisteter Host: der Egress-Guard (SEC-004) laesst nur die
+    # echten Upstreams durch, und das gilt auch unter respx — der Guard haengt
+    # als Request-Hook am Client, nicht am Transport.
+    TOR_URL = f"{BASE_URL}/providers"
+
+    @staticmethod
+    def _erschoepft(client: MobilityHTTPClient, *, wartezeit: float) -> None:
+        """Meldet den Limiter als voll, mit genau der gewuenschten Wartezeit.
+
+        Nicht ueber echte Zeitstempel: die haengen an `time.monotonic()`, und
+        die einzufrieren hiesse, die Uhr der Event-Loop anzuhalten.
+        """
+        limiter = RateLimiter(max_requests=1, window_seconds=60)
+        limiter.can_proceed = lambda: False
+        limiter.wait_time = lambda: wartezeit
+        client.register_limiter("test", limiter)
+
+    @respx.mock
+    async def test_ein_kurzes_warten_wird_abgewartet_und_die_anfrage_geht_raus(self, monkeypatch):
+        """Unter der Grenze wartet der Client und fragt dann doch."""
+        geschlafen: list[float] = []
+
+        async def _kein_schlaf(sekunden: float) -> None:
+            geschlafen.append(sekunden)
+
+        monkeypatch.setattr(api_infrastructure, "_sleep", _kein_schlaf)
+        route = respx.get(self.TOR_URL).respond(200, json={"ok": True})
+        client = MobilityHTTPClient()
+        self._erschoepft(client, wartezeit=api_infrastructure.MAX_RATE_LIMIT_WAIT - 1)
+
+        ergebnis = await client.get_json(self.TOR_URL, limiter_name="test", use_cache=False)
+
+        assert ergebnis == {"ok": True}
+        assert route.call_count == 1, "nach dem Warten muss die Anfrage rausgehen"
+        assert geschlafen == [api_infrastructure.MAX_RATE_LIMIT_WAIT - 1], (
+            f"gewartet wurde {geschlafen}, nicht die vom Limiter genannte Zeit"
+        )
+
+    @respx.mock
+    async def test_ein_langes_warten_wird_abgesagt_ohne_zu_warten(self, monkeypatch):
+        """Ueber der Grenze wird abgesagt — und zwar *bevor* gewartet wird.
+
+        Erst warten und dann absagen waere das Schlechteste aus beidem: der
+        Anrufer haelt still, und am Ende bekommt er trotzdem einen Fehler.
+        """
+        geschlafen: list[float] = []
+
+        async def _kein_schlaf(sekunden: float) -> None:
+            geschlafen.append(sekunden)
+
+        monkeypatch.setattr(api_infrastructure, "_sleep", _kein_schlaf)
+        route = respx.get(self.TOR_URL).respond(200, json={"ok": True})
+        client = MobilityHTTPClient()
+        self._erschoepft(client, wartezeit=api_infrastructure.MAX_RATE_LIMIT_WAIT + 1)
+
+        with pytest.raises(APIError) as fehler:
+            await client.get_json(self.TOR_URL, limiter_name="test", use_cache=False)
+
+        assert "Rate Limit" in str(fehler.value)
+        assert geschlafen == [], "abgesagt wurde erst nach dem Warten"
+        assert route.call_count == 0, "trotz Absage ging eine Anfrage raus"
+
+    async def test_das_warten_traegt_einen_namen_dieses_moduls(self, monkeypatch):
+        """Sonst liesse sich das Tor nur durch echtes Warten pruefen.
+
+        `monkeypatch.setattr(api_infrastructure.asyncio, "sleep", ...)` loest
+        `.asyncio` zum stdlib-Modul auf und ersetzt die Funktion im ganzen
+        Prozess — httpx, respx, anyio und jeden anderen Test eingeschlossen.
+        """
+        import asyncio
+        import inspect
+
+        vorher = asyncio.sleep
+
+        async def _nichts(_sekunden: float) -> None:
+            return None
+
+        monkeypatch.setattr(api_infrastructure, "_sleep", _nichts)
+        assert api_infrastructure._sleep is _nichts, "die Naht wurde gar nicht uebernommen"
+        assert asyncio.sleep is vorher, "asyncio.sleep wurde prozessweit ersetzt"
+
+        quelle = inspect.getsource(MobilityHTTPClient.get_json)
+        assert "await _sleep(" in quelle, "das Tor wartet nicht mehr ueber den Alias"
+        assert "asyncio.sleep" not in quelle, "zurueck auf der stdlib-Funktion"
