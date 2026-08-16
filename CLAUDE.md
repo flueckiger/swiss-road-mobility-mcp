@@ -64,8 +64,12 @@ python scripts/check_version_sync.py
 ```
 
 Dazu ein Gitleaks-Job im selben Workflow. Kein Coverage-Gate. Kein `include`
-unter `[tool.ruff]` setzen — der Umfang stimmt (35 Dateien über alle drei
-Verzeichnisse, nachgemessen).
+unter `[tool.ruff]` setzen — der Umfang stimmt: `ruff check` sieht 36 Dateien
+über alle drei Verzeichnisse, `ruff format` 37, weil 0.16 auch Markdown
+formatiert und damit `tests/fixtures/PROVENANCE.md` mitnimmt. Zwei Zahlen,
+kein Fehler. Vor dem Nachmessen `ruff --version` prüfen: ein älteres ruff
+früher im `PATH` schlägt den Pin, ohne etwas zu melden — und zählt die
+Markdown-Datei nicht mit.
 
 **Live-Tests:** `.github/workflows/live-tests.yml` läuft nächtlich per Cron
 (`0 4 * * *`). Sie sind hier also nicht bloss per `-m "not live"`
