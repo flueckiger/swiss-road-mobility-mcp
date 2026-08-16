@@ -71,6 +71,15 @@ kein Fehler. Vor dem Nachmessen `ruff --version` prüfen: ein älteres ruff
 früher im `PATH` schlägt den Pin, ohne etwas zu melden — und zählt die
 Markdown-Datei nicht mit.
 
+**Alle sechs laufen auf allen drei Versionen.** Keine
+`if: matrix.python-version`-Ausnahme — ein grünes 3.13 heisst hier wirklich,
+dass alles auf 3.13 lief. (Im Portfolio nicht selbstverständlich:
+`swiss-food-safety-mcp` gated zwei Gates auf 3.11.) Ein `fail-fast: false`
+steht nicht da, es gilt also der Standard: Eine rote 3.11 bricht 3.12 und
+3.13 ab, bevor sie etwas sagen.
+
 **Live-Tests:** `.github/workflows/live-tests.yml` läuft nächtlich per Cron
-(`0 4 * * *`). Sie sind hier also nicht bloss per `-m "not live"`
+(`0 4 * * *`) plus `workflow_dispatch` — der Knopf ist der Weg, eine Änderung
+am Workflow vor dem Merge zu prüfen, weil `schedule` nur auf dem
+Default-Branch greift. Sie sind hier also nicht bloss per `-m "not live"`
 ausgeschlossen; DRIFT-005 ist erfüllt.
