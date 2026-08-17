@@ -69,6 +69,7 @@ gibt es nicht.
 **Gates, wörtlich aus der CI:**
 
 ```bash
+python scripts/check_ruff_pin.py
 ruff check src/ tests/ scripts/
 ruff format --check src/ tests/ scripts/
 python -m py_compile src/swiss_road_mobility_mcp/server.py
