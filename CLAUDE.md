@@ -87,7 +87,7 @@ damit `tests/fixtures/PROVENANCE.md` mitnimmt — zwei Zahlen, kein Fehler. Vor
 dem Nachmessen `ruff --version` prüfen: ein älteres ruff früher im `PATH`
 schlägt den Pin, ohne etwas zu melden — und zählt die Markdown-Datei nicht mit.
 
-**Alle sechs laufen auf allen drei Versionen.** Keine
+**Alle sieben laufen auf allen drei Versionen.** Keine
 `if: matrix.python-version`-Ausnahme — ein grünes 3.13 heisst hier wirklich,
 dass alles auf 3.13 lief. (Im Portfolio nicht selbstverständlich:
 `swiss-food-safety-mcp` gated zwei Gates auf 3.11.) Ein `fail-fast: false`
