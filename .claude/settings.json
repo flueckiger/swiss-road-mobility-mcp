@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "SessionStart-Hook 'check-clone-freshness.sh' meldet, wie viele Commits der",
+    "ausgecheckte Stand hinter origin/<default-branch> liegt; bei 0 schweigt er.",
+    "",
+    "GRUND: Ein veralteter Klon hat am 3.8.2026 zweimal eine rote CI erzeugt,",
+    "deren Ursache nicht im Diff stand - die fehlenden Commits waren jeweils",
+    "genau die, die das Gate einfuehrten, an dem der Branch scheiterte. Die",
+    "Pruefung kostet eine Sekunde und ersetzt eine Fehlersuche in den falschen",
+    "Dateien.",
+    "",
+    "Der Hook blockiert die Session niemals: kein Netz, kein Remote, detached",
+    "HEAD oder flatterndes DNS enden still mit Exit-Code 0. Netzaufrufe sind auf",
+    "4s begrenzt (2 Aufrufe im schlimmsten Fall); 'timeout: 15' unten ist das",
+    "letzte Auffangnetz. Der Default-Branch wird ermittelt, nicht als 'main'",
+    "angenommen - im Portfolio nutzen openlex-mcp, swiss-courts-mcp und",
+    "swisstopo-mcp 'master'.",
+    "",
+    "Details und Testmatrix: .claude/hooks/README.md"
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-clone-freshness.sh\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
