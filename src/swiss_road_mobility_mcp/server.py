@@ -30,6 +30,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
 
+from mcp.server.caching import CacheableMethod, CacheHint
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -74,8 +75,36 @@ async def _lifespan(server: MCPServer) -> AsyncIterator[dict]:
             _client = None
 
 
+# SEP-2549, Spec 2026-07-28: die auflistenden Methoden tragen `ttlMs` und
+# `cacheScope`. Das SDK setzt beides auf «sofort veraltet, nie geteilt» — ein
+# Server ohne `cache_hints` verhaelt sich also nicht neutral, sondern laesst
+# jeden Client bei jeder Verbindung neu auflisten, fuer Listen, die beim Import
+# feststehen und sich zur Laufzeit des Prozesses nicht aendern koennen.
+#
+# `public` folgt aus der Sache, nicht aus Bequemlichkeit: die 15 Tools werden
+# per Dekorator beim Import registriert, es gibt keine Filterung nach Aufrufer.
+# Sobald eine Liste vom Aufrufer abhaengt, muss der Scope im selben Commit auf
+# `private` wechseln.
+#
+# `resources/read` und `prompts/get` stehen bewusst nicht dabei: das waere eine
+# Zusicherung ueber den INHALT statt ueber das Verzeichnis.
+LIST_CACHE_TTL_MS = 300_000
+
+# Annotiert, nicht inferiert: `MCPServer` nimmt
+# `Mapping[CacheableMethod, CacheHint]`, und ein Dict-Literal ohne Annotation
+# inferiert mypy als `str`. Zur Laufzeit stimmt beides — ein `mypy src/`-Gate
+# meldet den Unterschied, die Tests nicht.
+CACHE_HINTS: dict[CacheableMethod, CacheHint] = {
+    "tools/list": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
+    "resources/list": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
+    "resources/templates/list": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
+    "prompts/list": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
+    "server/discover": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
+}
+
 mcp = MCPServer(
     "swiss_road_mobility_mcp",
+    cache_hints=CACHE_HINTS,
     instructions=(
         "Swiss road and mobility data server with 15 tools (Phase 1 + Phase 2 + Phase 3 + Phase 4). "
         "Phase 1 (no API key): shared vehicles (road_find_sharing, road_search_sharing, road_sharing_providers), "
@@ -1748,7 +1777,6 @@ def _run_sse(host: str, port: int) -> None:
     to the plain MCPServer SSE runner if the app/middleware wiring is unavailable
     (e.g. a future SDK API change), so SSE never silently breaks.
     """
-    allowed = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
     cfg = middleware_config()
     if not cfg.auth_token:
         logger.warning(
@@ -1760,43 +1788,73 @@ def _run_sse(host: str, port: int) -> None:
         )
     try:
         import uvicorn
-        from starlette.middleware.cors import CORSMiddleware
 
-        security = build_transport_security(host, port)
-        if security is None:
-            logger.warning(
-                "DNS rebinding protection is OFF: the bind %s is not loopback and "
-                "MCP_ALLOWED_HOSTS is empty. Set it to the hostnames this server "
-                "is reachable under so Host and Origin are validated (SEC-005). "
-                "This is separate from MCP_AUTH_TOKEN — a rebinding attack "
-                "carries a valid token by construction.",
-                host,
-            )
-        # `host` is not cosmetic: the SDK derives its Host allow-list from it, so
-        # omitting it made a 0.0.0.0 deployment answer every request with 421.
-        app = mcp.sse_app(transport_security=security, host=host)
-        # add_middleware prepends, so the LAST added is outermost. Desired
-        # request flow: CORS -> RateLimit -> BearerAuth -> app.
-        app.add_middleware(BearerAuthMiddleware, token=cfg.auth_token)
-        app.add_middleware(
-            RateLimitMiddleware,
-            max_requests=cfg.rate_limit_max,
-            window_seconds=cfg.rate_limit_window,
-        )
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origins=allowed or ["*"],
-            allow_methods=["GET", "POST", "OPTIONS"],
-            allow_headers=["Content-Type", "Mcp-Session-Id", "Authorization"],
-            expose_headers=["Mcp-Session-Id"],  # SDK-004: critical for browser clients
-        )
-        # OBS-006: outermost wrapper so server spans cover the full request and
-        # W3C trace-context is extracted from inbound headers (no-op if tracing off).
-        app = instrument_asgi(app)
-        uvicorn.run(app, host=host, port=port)
+        uvicorn.run(build_sse_app(host, port), host=host, port=port)
     except Exception:
         logger.exception("Hardened SSE app unavailable; falling back to plain SSE")
         mcp.run(transport="sse", host=host, port=port)
+
+
+# Die Header, nach denen Spec 2026-07-28 eine Anfrage routet — in der
+# Schreibweise des SDK (`mcp.shared.inbound`). Ein Browser darf einen nicht
+# safelisteten Header gar nicht erst senden, wenn der Server ihn nicht in
+# `Access-Control-Allow-Headers` nennt: ohne sie stirbt jede Cross-Origin-
+# Anfrage am Preflight, vor dem ersten MCP-Byte.
+CORS_ROUTING_HEADERS = ["Mcp-Method", "Mcp-Name", "Mcp-Protocol-Version"]
+
+
+def build_sse_app(host: str = "127.0.0.1", port: int = 8000):
+    """Baut die gehaertete SSE-App, ohne einen Socket zu binden.
+
+    Herausgezogen aus `_run_sse`, damit die CORS-Schicht pruefbar ist: solange
+    Aufbau und `uvicorn.run` in derselben Funktion standen, liess sich die
+    Freigabeliste nur lesen, nicht ausprobieren — und eine gelesene Liste kann
+    vollstaendig aussehen und trotzdem nie an der Middleware ankommen.
+
+    Die Reihenfolge der Middlewares bleibt unveraendert: `add_middleware`
+    stellt voran, die zuletzt angehaengte liegt also aussen. Gewuenschter
+    Anfragefluss CORS -> RateLimit -> BearerAuth -> App.
+    """
+    from starlette.middleware.cors import CORSMiddleware
+
+    allowed = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+    cfg = middleware_config()
+    security = build_transport_security(host, port)
+    if security is None:
+        logger.warning(
+            "DNS rebinding protection is OFF: the bind %s is not loopback and "
+            "MCP_ALLOWED_HOSTS is empty. Set it to the hostnames this server "
+            "is reachable under so Host and Origin are validated (SEC-005). "
+            "This is separate from MCP_AUTH_TOKEN — a rebinding attack "
+            "carries a valid token by construction.",
+            host,
+        )
+    # `host` is not cosmetic: the SDK derives its Host allow-list from it, so
+    # omitting it made a 0.0.0.0 deployment answer every request with 421.
+    app = mcp.sse_app(transport_security=security, host=host)
+    # add_middleware prepends, so the LAST added is outermost. Desired
+    # request flow: CORS -> RateLimit -> BearerAuth -> app.
+    app.add_middleware(BearerAuthMiddleware, token=cfg.auth_token)
+    app.add_middleware(
+        RateLimitMiddleware,
+        max_requests=cfg.rate_limit_max,
+        window_seconds=cfg.rate_limit_window,
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allowed or ["*"],
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=[
+            "Content-Type",
+            *CORS_ROUTING_HEADERS,
+            "Mcp-Session-Id",
+            "Authorization",
+        ],
+        expose_headers=["Mcp-Session-Id"],  # SDK-004: critical for browser clients
+    )
+    # OBS-006: outermost wrapper so server spans cover the full request and
+    # W3C trace-context is extracted from inbound headers (no-op if tracing off).
+    return instrument_asgi(app)
 
 
 if __name__ == "__main__":
