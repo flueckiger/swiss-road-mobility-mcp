@@ -74,14 +74,24 @@ def test_wildcard_bind_with_allowlist_is_protected(monkeypatch):
     assert "127.0.0.1:8000" in sec.allowed_hosts
 
 
-def test_wildcard_cors_default_is_not_copied():
-    """ALLOWED_ORIGINS defaultet hier auf eine Wildcard.
+def test_a_wildcard_origin_is_not_copied(monkeypatch):
+    """``*`` gehört nicht in die Transportliste: Origins werden dort literal
+    verglichen, ein Eintrag namens ``*`` erlaubte also nichts und machte die
+    Liste bloss unlesbar.
 
-    Als Origin literal übernommen wäre ``*`` ein Eintrag, der nichts erlaubt und
-    die Liste unlesbar macht.
+    Die Wildcard muss dafür **gesetzt** sein. Der Vorgänger dieses Tests hiess
+    ``test_wildcard_cors_default_is_not_copied`` und berief sich auf einen
+    Wildcard-Default, den es seit der Umstellung auf fail-closed nicht mehr
+    gibt — die autouse-Fixture oben löscht ``ALLOWED_ORIGINS``, die Liste war
+    also leer und ``"*" not in []`` trivial wahr. Eine Zusicherung, die auch
+    dann hält, wenn man den Filter entfernt, prüft nichts.
     """
+    monkeypatch.setenv("ALLOWED_ORIGINS", "https://claude.ai,*")
     sec = build_transport_security("127.0.0.1", 8000)
     assert "*" not in sec.allowed_origins
+    # Gegenkontrolle: die echte Origin daneben kommt sehr wohl durch — sonst
+    # wäre der Test auch gegen einen Filter grün, der alles wegwirft.
+    assert "https://claude.ai" in sec.allowed_origins
 
 
 def test_explicit_cors_origins_pass_the_transport_check(monkeypatch):

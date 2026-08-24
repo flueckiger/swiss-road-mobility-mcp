@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben
+
+- **`.env.example` behauptete weiter den Wildcard-Default.** Die Umstellung auf
+  fail-closed korrigierte `README.md` und `README.de.md`, übersah aber diese
+  dritte Kopie: dort stand weiterhin `Unset = wildcard "*"`, und die Zeile war
+  auskommentiert. Wer die Datei kopierte, sperrte damit jeden Browser-Client
+  aus und fand den Grund an der Stelle, an der er nachsah, falsch beschrieben.
+  Die Variable ist jetzt gesetzt statt auskommentiert.
+
+- **`test_wildcard_cors_default_is_not_copied` prüfte nichts mehr.** Die
+  autouse-Fixture löscht `ALLOWED_ORIGINS`; seit dem leeren Default war die
+  Liste damit leer und `"*" not in []` trivial wahr. Nachgemessen: den
+  `if o != "*"`-Filter zu entfernen liess die Datei 13/13 grün. Der Test setzt
+  die Wildcard jetzt selbst — und prüft mit einer zweiten Zusicherung, dass die
+  echte Origin daneben durchkommt, sonst wäre er auch gegen einen Filter grün,
+  der alles wegwirft.
+
 ### Geändert
 
 - **BRECHEND: `allow_origins` las `allowed or ["*"]`.** Die Variable
