@@ -162,7 +162,7 @@ API quota), configure these environment variables on the host:
 | `MCP_AUTH_TOKEN` | When set, every SSE request must send `Authorization: Bearer <token>`. **Unset = unauthenticated** (the server logs a loud warning at startup). Strongly recommended for any public deployment. |
 | `MCP_RATE_LIMIT` | Max requests per client IP per window (default `60`, `0` disables). |
 | `MCP_RATE_WINDOW` | Window length in seconds (default `60`). |
-| `ALLOWED_ORIGINS` | Comma-separated CORS origins for browser clients (default `*`). |
+| `ALLOWED_ORIGINS` | Comma-separated CORS origins for browser clients. **Empty by default: no cross-origin access.** `*` allows any origin and is logged as a warning. Does not affect stdio or other non-browser clients. |
 
 The local **stdio** transport needs none of this — it runs in the user's
 trusted context.

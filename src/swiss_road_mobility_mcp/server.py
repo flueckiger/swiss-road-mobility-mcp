@@ -1710,6 +1710,21 @@ def main():
         mcp.run(transport="stdio")
 
 
+def configured_origins() -> list[str]:
+    """Parse `ALLOWED_ORIGINS`. Empty by default — no cross-origin access.
+
+    `allow_origins` read `allowed or ["*"]`: leaving the variable unset did not
+    mean "no browser clients", it meant *every* website on the internet could
+    call this server from a visitor's browser. A fallback is not a default an
+    operator chose; it is one they inherited without being asked.
+
+    The wildcard is still reachable — it just has to be asked for now, and the
+    server says so in the log. stdio and non-browser clients are unaffected
+    either way; CORS governs browsers only.
+    """
+    return [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+
+
 def build_transport_security(host: str, port: int):
     """Host/Origin allow-list for the SSE transport (SEC-005, inbound half).
 
@@ -1746,9 +1761,8 @@ def build_transport_security(host: str, port: int):
 
     # Configured CORS origins must also pass the transport check, or the server
     # rejects exactly the browser clients CORS permits. "*" is not expressible
-    # (origins are compared literally) and is not copied across — relevant here
-    # because ALLOWED_ORIGINS defaults to a wildcard.
-    origins = {o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip() and o.strip() != "*"}
+    # (origins are compared literally) and is not copied across.
+    origins = {o for o in configured_origins() if o != "*"}
     origins |= {f"http://{h}" for h in hosts}
     return TransportSecuritySettings(
         enable_dns_rebinding_protection=True,
@@ -1766,8 +1780,8 @@ def _run_sse(host: str, port: int) -> None:
       CORS (SDK-004) -> RateLimit (SEC-009) -> BearerAuth (SEC-009) -> app
 
     - CORS exposes `Mcp-Session-Id` so browser clients on another origin can
-      read it (SDK-004). Origins via ALLOWED_ORIGINS (default wildcard, safe
-      while no credentials are used).
+      read it (SDK-004). Origins via ALLOWED_ORIGINS, empty by default: unset
+      means no cross-origin access rather than access from anywhere.
     - RateLimit caps requests per client IP (MCP_RATE_LIMIT / MCP_RATE_WINDOW)
       to dampen abuse / upstream-quota exhaustion even in unauthenticated mode.
     - BearerAuth requires `Authorization: Bearer <MCP_AUTH_TOKEN>` when that
@@ -1817,7 +1831,18 @@ def build_sse_app(host: str = "127.0.0.1", port: int = 8000):
     """
     from starlette.middleware.cors import CORSMiddleware
 
-    allowed = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+    allowed = configured_origins()
+    if "*" in allowed:
+        logger.warning(
+            "ALLOWED_ORIGINS contains '*': any site can call this server from a "
+            "visitor's browser. Name explicit origins in production."
+        )
+    elif not allowed:
+        logger.info(
+            "ALLOWED_ORIGINS is unset, so browser-based MCP clients are not "
+            "permitted. Set it to a comma-separated origin list to enable them. "
+            "stdio and non-browser clients are unaffected."
+        )
     cfg = middleware_config()
     security = build_transport_security(host, port)
     if security is None:
@@ -1842,7 +1867,7 @@ def build_sse_app(host: str = "127.0.0.1", port: int = 8000):
     )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=allowed or ["*"],
+        allow_origins=allowed,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=[
             "Content-Type",

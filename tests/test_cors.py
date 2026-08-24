@@ -145,3 +145,80 @@ def test_der_session_header_ist_weiterhin_freigegeben(client: TestClient) -> Non
     resp = preflight(client, MCP_SESSION_ID_HEADER)
     assert resp.status_code == 200, "der Session-Header wird am Preflight abgewiesen"
     assert MCP_SESSION_ID_HEADER in resp.headers["access-control-allow-headers"].lower()
+
+
+# ── Origins ────────────────────────────────────────────────────────────────
+#
+# `allow_origins` las `allowed or ["*"]`. Die Variable nicht zu setzen hiess
+# also nicht «keine Browser-Clients», sondern «jede Website im Netz» — gemessen
+# am zusammengebauten Stack bekam ein Preflight von `https://evil.example`
+# dasselbe `Access-Control-Allow-Origin: *` wie `https://client.example`.
+#
+# Ein Fallback ist kein Default, den jemand gewaehlt hat, sondern einer, den er
+# ungefragt geerbt hat.
+
+
+def test_ohne_konfigurierte_origin_kommt_kein_browser_durch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Fail-closed. Nicht gesetzt heisst jetzt: gar kein Cross-Origin-Zugriff.
+
+    stdio- und Nicht-Browser-Clients sind davon unberuehrt — CORS regelt
+    ausschliesslich Browser.
+    """
+    monkeypatch.delenv("ALLOWED_ORIGINS", raising=False)
+    c = TestClient(build_sse_app())
+    resp = preflight(c, "content-type")
+    assert "access-control-allow-origin" not in resp.headers
+
+
+def test_eine_fremde_origin_wird_abgewiesen(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Die Gegenkontrolle. Ohne sie waere jeder Origin-Test hier auch gegen den
+    alten Wildcard-Fallback gruen gewesen — die Zusicherung koennte nicht
+    widerlegen, wovon sie handelt."""
+    monkeypatch.setenv("ALLOWED_ORIGINS", ORIGIN)
+    c = TestClient(build_sse_app())
+    resp = c.options(
+        ENDPOINT,
+        headers={
+            "Origin": "https://woanders.example",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert "access-control-allow-origin" not in resp.headers
+
+
+def test_die_wildcard_bleibt_erreichbar_muss_aber_verlangt_werden(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Einen Default verschaerfen ist nicht dasselbe wie die Option streichen.
+    Wer Any-Origin will, bekommt es weiterhin — bewusst, und der Server
+    protokolliert es."""
+    monkeypatch.setenv("ALLOWED_ORIGINS", "*")
+    c = TestClient(build_sse_app())
+    assert preflight(c, "content-type").headers["access-control-allow-origin"] == "*"
+
+
+def test_configured_origins_liest_eine_liste(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Kommasepariert, Leerzeichen weg, leere Eintraege raus."""
+    from swiss_road_mobility_mcp.server import configured_origins
+
+    monkeypatch.setenv("ALLOWED_ORIGINS", " https://a.test , ,https://b.test ")
+    assert configured_origins() == ["https://a.test", "https://b.test"]
+
+
+def test_die_transportpruefung_laesst_die_konfigurierten_origins_durch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """CORS und Transportpruefung lesen jetzt dieselbe Funktion. Vorher waren es
+    zwei getrennte `os.environ.get`-Aufrufe derselben Variablen — die konnten
+    auseinanderlaufen, ohne dass etwas rot wird."""
+    from swiss_road_mobility_mcp.server import build_transport_security
+
+    monkeypatch.setenv("ALLOWED_ORIGINS", "https://a.test,*")
+    security = build_transport_security("127.0.0.1", 8000)
+    assert security is not None
+    assert "https://a.test" in security.allowed_origins
+    # `*` ist dort nicht ausdrueckbar: Origins werden literal verglichen.
+    assert "*" not in security.allowed_origins
