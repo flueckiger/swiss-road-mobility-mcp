@@ -152,6 +152,12 @@ Für den Einsatz via **claude.ai im Browser** (z.B. auf verwalteten Arbeitsplät
 3. Start-Befehl setzen: `MCP_TRANSPORT=sse MCP_PORT=8001 swiss-road-mobility-mcp`
 4. In claude.ai unter Settings -> MCP Servers eintragen: `https://your-app.onrender.com/sse`
 
+> **`ALLOWED_ORIGINS` setzen, sonst lässt der Server keinen Browser durch.**
+> Kommaseparierte CORS-Origins, standardmässig leer — nicht gesetzt heisst kein
+> Cross-Origin-Zugriff. Für claude.ai also
+> `ALLOWED_ORIGINS=https://claude.ai`. `*` erlaubt jede Origin und wird als
+> Warnung protokolliert. stdio-Clients sind davon nicht betroffen.
+
 ---
 
 ## Verfügbare Tools

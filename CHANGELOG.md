@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Geändert
+
+- **BRECHEND: `allow_origins` las `allowed or ["*"]`.** Die Variable
+  `ALLOWED_ORIGINS` nicht zu setzen hiess damit nicht «keine Browser-Clients»,
+  sondern *jede* Website im Netz — ein Fallback ist kein Default, den jemand
+  gewählt hat, sondern einer, den er ungefragt geerbt hat.
+
+  Gemessen vorher am zusammengebauten ASGI-Stack: ein Preflight von
+  `https://evil.example` bekam dasselbe `Access-Control-Allow-Origin: *` wie
+  `https://client.example`. Danach ohne Konfiguration gar kein
+  `Access-Control-Allow-Origin` mehr.
+
+  Die Wildcard bleibt erreichbar, muss aber verlangt werden, und der Server
+  protokolliert sie dann als Warnung; ein leerer Wert wird als `info` vermerkt.
+
+  **Wer den bisherigen Zustand behalten will, setzt `ALLOWED_ORIGINS=*`;** für
+  claude.ai im Browser `ALLOWED_ORIGINS=https://claude.ai`. stdio- und
+  Nicht-Browser-Clients sind unberührt — CORS regelt ausschliesslich Browser.
+
+  CORS-Schicht und Transportprüfung lesen die Origins jetzt aus derselben
+  Funktion `configured_origins()`. Vorher waren es zwei getrennte
+  `os.environ.get`-Aufrufe derselben Variablen, die auseinanderlaufen konnten,
+  ohne dass etwas rot wird.
+
 ### Behoben
 
 - **Browser-Clients scheiterten am Preflight.** Spec `2026-07-28` routet eine
